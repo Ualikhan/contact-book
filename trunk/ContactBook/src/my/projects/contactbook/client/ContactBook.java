@@ -3,6 +3,10 @@ package my.projects.contactbook.client;
 import java.lang.ref.PhantomReference;
 import java.util.*;
 
+import my.projects.contactbook.shared.FieldVerifier;
+import my.projects.contactbook.shared.model.Contact;
+import my.projects.contactbook.shared.Phone;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.DateCell;
@@ -16,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableCellElement;
@@ -38,17 +43,25 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.ColumnSortList;
+import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -70,11 +83,12 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ContactBook implements EntryPoint {
-	public static int id=0;
-	public static int selectedIndex;
-	 List<Contact> CONTACTS;
-	 CellTable<Contact> table;
-	ListDataProvider<Contact> dataProvider;
+	private static int id=0;
+	private static Long selectedIndex;
+	private List<Contact> CONTACTS=new ArrayList<Contact>();
+	private CellTable<Contact> table = new CellTable<Contact>();
+	private ListDataProvider<Contact> dataProvider = new ListDataProvider<Contact>();
+	boolean added;
 	static class ColorCell extends AbstractCell<List<Phone>> {
 
 	    /**
@@ -113,7 +127,7 @@ public class ContactBook implements EntryPoint {
 
 	      for(Phone phone:phones){
 	      // If the value comes from the user, we escape it to avoid XSS attacks.
-	      SafeHtml safeValue = SafeHtmlUtils.fromString(phone.number+"("+phone.type+")");
+	      SafeHtml safeValue = SafeHtmlUtils.fromString(phone.getNumber()+"("+phone.getType()+")");
 
 	      // Use the template to create the Cell's html.
 	      SafeStyles styles = SafeStylesUtils.fromTrustedString("width: 100%;");
@@ -122,84 +136,38 @@ public class ContactBook implements EntryPoint {
 	      }
 	    }
 	  }
-
-	private static class Contact {
-		private final int contactId;
-	   private String surname;
-	    private String name;
-	    private List<Phone> phones=null;
-	    public Contact() {
-	    	  id++;
-	    	  contactId=id;
-	    	  if(phones==null)
-		    	  phones=new ArrayList<Phone>();
-		      
-		    }
-	    public Contact(String name, String surname, String address) {
-	    	  id++;
-	    	  contactId=id;
-		      this.name = name;
-		      this.surname = surname;
-		      if(phones==null)
-		    	  phones=new ArrayList<Phone>();
-		      
-		    }
-	    public Contact(String name, String surname, String address,Phone phone) {
-	    	id++;
-	    	contactId=id;
-	    	this.name = name;
-	      this.surname = surname;
-	      if(phones==null)
-	    	  phones=new ArrayList<Phone>();
-	      
-	      phones.add(phone);
-	    }
-	    public void addPhone(Phone phone){
-	    	phones.add(phone);
-	    }
-	    public void setName(String name) {
-			this.name = name;
-		}
-	    public void setSurname(String surname) {
-			this.surname = surname;
-		}
-	  }
-	private static class Phone{
-	    private final String number;
-	    private final String type;
-	   public Phone(String number,String type) {
-	      this.number=number;
-	      this.type=type;
-	    }
-	  }
-
-	  /**
-	   * The list of data to display.
-	   */
-			static Contact contact1=new Contact("John", "Johnson", "123 Fourth Avenue");
-			static Contact contact2=new Contact("Joe", "Doe", "22 Lance Ln");
-			static Contact contact3=new Contact("George", "Clooney", "1600 Pennsylvania Avenue",new Phone("+7852278","mobile"));
-			
-			
+	
+	private GreetingServiceAsync service=GWT.create(GreetingService.class);
 	
 	  public void onModuleLoad() {
-			contact3.addPhone(new Phone("+287429382","home"));
-			contact3.addPhone(new Phone("+384593","work"));
-			contact3.addPhone(new Phone("+12931802","home"));
-			CONTACTS=new ArrayList<Contact>();
-		 CONTACTS.add(contact1);
-		 CONTACTS.add(contact2);
-		 CONTACTS.add(contact3);
-		      
-	    // Create a CellTable.
-	    table = new CellTable<Contact>();
-	    table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-	    
-	   
-	    TextColumn<Contact> idColumn = new TextColumn<Contact>() {
+		 
+		   table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+		
+			service.list(new AsyncCallback<List<Contact>>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(List<Contact> result) {
+					
+					CONTACTS=result;
+
+				    List<Contact> list = dataProvider.getList();
+
+			        for(Contact c:result)
+			        list.add(c);
+				    					
+				}
+			});
+					
+	    System.out.println(CONTACTS.size());
+	   TextColumn<Contact> idColumn = new TextColumn<Contact>() {
 		      @Override
 		      public String getValue(Contact object) {
-		        return object.contactId+"";
+		        return object.getId()+"";
 		      }
 		    };
 		    table.addColumn(idColumn, "Id");
@@ -207,7 +175,7 @@ public class ContactBook implements EntryPoint {
 	    TextColumn<Contact> surnameColumn = new TextColumn<Contact>() {
 		      @Override
 		      public String getValue(Contact object) {
-		        return object.surname;
+		        return object.getSurname();
 		      }
 		    };
 		    table.addColumn(surnameColumn, "Surname");
@@ -215,7 +183,7 @@ public class ContactBook implements EntryPoint {
 	    TextColumn<Contact> nameColumn = new TextColumn<Contact>() {
 	      @Override
 	      public String getValue(Contact object) {
-	        return object.name;
+	        return object.getName();
 	      }
 	    };
 	    table.addColumn(nameColumn, "Name");
@@ -227,7 +195,7 @@ public class ContactBook implements EntryPoint {
 			@Override
 			public List<Phone> getValue(Contact object) {
 				// TODO Auto-generated method stub
-				return object.phones;
+				return object.getPhones();
 			}
 		};
 	    table.addColumn(dateColumn, "Phones");
@@ -239,77 +207,109 @@ public class ContactBook implements EntryPoint {
 	      public void onSelectionChange(SelectionChangeEvent event) {
 	        Contact selected = selectionModel.getSelectedObject();
 	        if (selected != null) {
-	         selectedIndex=selected.contactId;
+	         selectedIndex=selected.getId();
 	        }
 	      }
 	    });
-
-	    // Set the total row count. This isn't strictly necessary, but it affects
-	    // paging calculations, so its good habit to keep the row count up to date.
-	    table.setRowCount(CONTACTS.size(), true);
-
-	    // Push the data into the widget.
-	    table.setRowData(0, CONTACTS);
 	    
-	    dataProvider = new ListDataProvider<Contact>();
-	    
-	    // Add the cellList to the dataProvider.
 	    dataProvider.addDataDisplay(table);
 	    
-	    List<Contact> list = dataProvider.getList();
-
-        for(int i=0;i<CONTACTS.size();i++)
-        list.add(CONTACTS.get(i));
-	    // Add it to the root panel.
-	    RootPanel.get().add(table);
-	    
-	    Button add = new Button("Add", new ClickListener() {
+	    Button add = new Button("+", new ClickListener() {
 	        public void onClick(Widget sender) {
 	           DialogBox dlg = new MyDialog("add");
 	           dlg.center();
 	        }
 	      });
 	    
-	    Button edit = new Button("Edit", new ClickListener() {
+	   add.setStyleName("addButton");
+	    Button edit = new Button("..", new ClickListener() {
 	        public void onClick(Widget sender) {
+	           System.out.println(selectedIndex);
+	           if(selectedIndex>0){
 	           DialogBox dlg = new MyDialog("edit");
 	           dlg.center();
+	           }
+	           else
+	           {
+	        	   DialogBox dlg=new ExceptionDialog();
+	        	   dlg.center();
+	           }
 	        }
 	      });
-
-	    Button remove = new Button("Remove", new ClickListener() {
+	    edit.setStyleName("editButton");
+	    Button remove = new Button("-", new ClickListener() {
 	        public void onClick(Widget sender) {
-	        	List<Contact> list = dataProvider.getList();
+	        	 if(selectedIndex>0){
+	        	final List<Contact> list = dataProvider.getList();
 
-	        	for(Contact c:list)
-			    	if(c.contactId==selectedIndex){
-			    		list.remove(c);
-			    		table.redraw();
+	        	
+	        	for(final Contact c:list)
+			    	if(c.getId()==selectedIndex){
+			    		service.delete(c,new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+								Window.alert(caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								// TODO Auto-generated method stub
+								list.remove(c);
+					    		table.redraw();
+								Window.alert("Selected contact is removed!");
+							}
+						});
+			    		
 			    	}
+			    	
+	        }
+	        	 else
+		           {
+		        	   DialogBox dlg=new ExceptionDialog();
+		        	   dlg.center();
+		           }
 	        }
 	      });
-	      RootPanel.get().add(add);
-	      RootPanel.get().add(edit);
-	      RootPanel.get().add(remove);
+	    remove.setStyleName("removeButton");
+	    VerticalPanel actionPanel=new VerticalPanel();
+	    actionPanel.add(add);
+	    DOM.setStyleAttribute(add.getElement(), "margin","5px" );
+	    //DOM.setStyleAttribute(add.getElement(), "margin-top","25px" );
+	    DOM.setStyleAttribute(add.getElement(), "width","25px" );
+	    actionPanel.add(edit);
+	    DOM.setStyleAttribute(edit.getElement(), "margin","5px" );
+	    DOM.setStyleAttribute(edit.getElement(), "width","25px" );
+	    actionPanel.add(remove);
+	    DOM.setStyleAttribute(remove.getElement(), "margin","5px" );
+	    DOM.setStyleAttribute(remove.getElement(), "width","25px" );
+	    
+	    HorizontalPanel mainPanel=new HorizontalPanel();
+	    mainPanel.add(table);
+	    mainPanel.add(actionPanel);
+	    table.setWidth("90%");
+	    DOM.setStyleAttribute(table.getElement(), "margin","20px" );
+	    mainPanel.setWidth("80%");
+	    RootPanel.get("root").add(mainPanel);
+	      
 	  }
 	  class MyDialog extends DialogBox implements ClickListener {
+		  
 		  public MyDialog(String action) {
 			  if(action.equals("add")){
 		    setText("Sample DialogBox");
+		    
 		    InlineLabel surnameLabel=new InlineLabel("Surname");
-		    
-		    final TextBox surname=new TextBox();
-		    
+		     final TextBox surname=new TextBox();
 		    InlineLabel nameLabel=new InlineLabel("Name");
-		    
 		    final TextBox name=new TextBox();
 		    
-		    final VerticalPanel phonesPanel=new VerticalPanel();
-			 
+		    
+		    final Grid phonesPanel=new Grid(0, 4);
+		    
 		    InlineLabel phoneLabel=new InlineLabel("Phones");
 		  
-		    final Contact c=new Contact();
-			
 		    Button addPhoneButton = new Button("Add phone", new ClickListener() {
 				
 				@Override
@@ -317,7 +317,9 @@ public class ContactBook implements EntryPoint {
 				public
 				void onClick(Widget sender) {
 					// TODO Auto-generated method stub
+					
 					TextBox phone=new TextBox();
+					
 					InlineLabel l=new InlineLabel("Phone");
 					ListBox lb=new ListBox();
 					lb.addItem("mobile");
@@ -331,27 +333,31 @@ public class ContactBook implements EntryPoint {
 						void onClick(Widget sender) {
 							// TODO Auto-generated method stub
 							//int removeIndex=Integer.parseInt(sender.getTitle());
-							for(Widget w:phonesPanel){
-								if(sender.getParent().equals(w))
-									phonesPanel.remove(w);
+							for(int i=0;i<phonesPanel.getRowCount();i++)
+								if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
+								phonesPanel.removeRow(i);
 							}
-							
+								
+								
 						}
 					});
 				   
 				    deletePhone.setHeight("25%");
 				    deletePhone.setWidth("15%");
-				    int index=phonesPanel.getWidgetCount();
+				    int index=phonesPanel.getRowCount();
+				    l.setLayoutData(index);
+				    phone.setLayoutData(index);
+				    lb.setLayoutData(index);
+				    deletePhone.setLayoutData(index);
+				    phonesPanel.insertRow(index);
+				   
+				    phonesPanel.setWidget(index, 0, l);
+				    phonesPanel.setWidget(index, 1, phone);
+				    phonesPanel.setWidget(index, 2, lb);
+				    phonesPanel.setWidget(index, 3, deletePhone);
 				    
-					final HorizontalPanel hp=new HorizontalPanel();
-					    
-					hp.insert(l,0);
-				    hp.insert(phone, 1);
-				    hp.insert(lb, 2);
-				    hp.insert(deletePhone, 3);
-				    phonesPanel.insert(hp, index);
 				}
-			});
+		    });
 		    
 		    Button okButton = new Button("OK", new ClickListener() {
 				
@@ -360,45 +366,75 @@ public class ContactBook implements EntryPoint {
 				public
 				void onClick(Widget sender) {
 					// TODO Auto-generated method stub
-					List<Contact> list = dataProvider.getList();
+					
+					final List<Contact> list = dataProvider.getList();
+					final Contact c=new Contact();
 					c.setName(name.getValue());
 					c.setSurname(surname.getValue());
+					
+					List<Phone> phones=new ArrayList<Phone>();
+					for(int i=0;i<phonesPanel.getRowCount();i++){
+						TextBox number=(TextBox) phonesPanel.getWidget(i,1);
+						ListBox type=(ListBox) phonesPanel.getWidget(i,2);
+													
+						Phone newPhone=new Phone();
+						newPhone.setNumber(number.getValue());
+						newPhone.setType(type.getItemText(type.getSelectedIndex()));
+						
+						phones.add(newPhone);
+						
+					}
+					c.setPhones(phones);
+					added=false;
+			        service.insert(c, new AsyncCallback<Long>() {
+						
+						@Override
+						public void onSuccess(Long result) {
+							c.setId(result);
+							list.add(c);
+							table.redraw();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getMessage());
+						}
+					});
+				   
+			        	
 			        
-			        // Add the value to the list. The dataProvider will update the cellList.
-			        list.add(c);
-				    table.redraw();
 				    hide();
 				    	
 				}
 			});
 		    Button closeButton = new Button("Close", this);
-		   
-		    VerticalPanel dock = new VerticalPanel();
-		    HorizontalPanel hp1=new HorizontalPanel();
-		    hp1.add(surnameLabel);
-		    hp1.add(surname);
+		  
+		   FlexTable flexTable = new FlexTable();
+		    flexTable.setWidget(0, 0, surnameLabel);
+		    flexTable.setWidget(0, 1, surname);
+		    flexTable.setWidget(1, 0, nameLabel);
+		    flexTable.setWidget(1, 1, name);
+		    flexTable.setWidget(2, 0, phoneLabel);
+		    flexTable.setWidget(2, 1, addPhoneButton);
+		    flexTable.setWidget(3, 0, phonesPanel);
+		    flexTable.setWidget(4, 1, okButton);
+		    flexTable.setWidget(4, 2, closeButton);
+		    flexTable.setStyleName("panel flexTable");
+		    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
+		    for (int i = 0; i < flexTable.getRowCount(); i++) {
+		        for (int j = 0; j < flexTable.getCellCount(i); j++) {
+		            if ((j % 2) == 0) {
+		                flexTable.getFlexCellFormatter()
+		                         .setStyleName(i, j, "tableCell-even");
+		            } else {
+		                flexTable.getFlexCellFormatter()
+		                         .setStyleName(i, j, "tableCell-odd");
+		            }
+		        }
+		    }
 		    
-		    dock.add(hp1);
-
-		    HorizontalPanel hp2=new HorizontalPanel();
-		    hp2.add(nameLabel);
-		    hp2.add(name);
 		    
-		    dock.add(hp2);
-		    		    
-		    dock.add(phoneLabel);		    
-		    dock.add(phonesPanel);
-		    dock.add(addPhoneButton);
-		    
-		    HorizontalPanel hp3=new HorizontalPanel();
-		    hp3.add(okButton);
-		    hp3.add(closeButton);
-		    
-		    dock.add(hp3);
-		    
-		   dock.setWidth("100%");
-		    dock.setHeight("100%");
-		    setWidget(dock);
+		    setWidget(flexTable);
 		  }
 
 			  else if(action.equals("edit")){
@@ -412,35 +448,55 @@ public class ContactBook implements EntryPoint {
 				    List<Contact> list = dataProvider.getList();
 
 				    for(Contact c:list)
-				    	if(c.contactId==selectedIndex){
-				    surname.setValue(c.surname);
-				    name.setValue(c.name);
+				    	if(c.getId()==selectedIndex){
+				    surname.setValue(c.getSurname());
+				    name.setValue(c.getName());
 				    
 				    	}
 				    
-				    final VerticalPanel phonesPanel=new VerticalPanel();
+				    final Grid phonesPanel=new Grid(0, 4);
+				    
 				    for(Contact c:list)
-				    	if(c.contactId==selectedIndex){
-				    		for(int i=0;i<c.phones.size();i++){
+				    	if(c.getId()==selectedIndex){
+				    		for(int i=0;i<c.getPhones().size();i++){
 				    		TextBox phone=new TextBox();
-				    		phone.setValue(c.phones.get(i).number);
+				    		phone.setValue(c.getPhones().get(i).getNumber());
 							InlineLabel l=new InlineLabel("Phone");
 							ListBox lb=new ListBox();
 							lb.addItem("mobile");
 						    lb.addItem("home");
 						    lb.addItem("work");
-						    Button deletePhone=new Button("X");
+						    Button deletePhone=new Button("X",new ClickListener() {
+								
+								@Override
+								@Deprecated
+								public
+								void onClick(Widget sender) {
+									// TODO Auto-generated method stub
+									//int removeIndex=Integer.parseInt(sender.getTitle());
+									for(int i=0;i<phonesPanel.getRowCount();i++)
+										if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
+										phonesPanel.removeRow(i);
+									}
+										
+										
+								}
+							});
 						    deletePhone.setHeight("25%");
-						    deletePhone.setWidth("15%");for(int j=0;j<lb.getItemCount();j++)
-						    if(c.phones.get(i).type.equals(lb.getItemText(j)))
+						    deletePhone.setWidth("15%");
+						    for(int j=0;j<lb.getItemCount();j++)
+						    if(c.getPhones().get(i).getType().equals(lb.getItemText(j)))
 						    		lb.setSelectedIndex(j);
-							int index=phonesPanel.getWidgetCount();
-							HorizontalPanel hp=new HorizontalPanel();
-							hp.insert(phone,0);
-							hp.insert(l,1);
-							hp.insert(lb,2);
-							hp.insert(deletePhone, 3);
-						    phonesPanel.insert(hp,index);
+						    int index=phonesPanel.getRowCount();
+						    l.setLayoutData(index);
+						    phone.setLayoutData(index);
+						    lb.setLayoutData(index);
+						    deletePhone.setLayoutData(index);
+						    phonesPanel.insertRow(index);
+						    phonesPanel.setWidget(index, 0, l);
+						    phonesPanel.setWidget(index, 1, phone);
+						    phonesPanel.setWidget(index, 2, lb);
+						    phonesPanel.setWidget(index, 3, deletePhone);
 						    
 				    		}
 				    	}
@@ -459,20 +515,40 @@ public class ContactBook implements EntryPoint {
 							// TODO Auto-generated method stub
 							TextBox phone=new TextBox();
 							InlineLabel l=new InlineLabel("Phone");
-							int index=phonesPanel.getWidgetCount();
-							final HorizontalPanel hp=new HorizontalPanel();
 							ListBox lb=new ListBox();
 							lb.addItem("mobile");
 						    lb.addItem("home");
 						    lb.addItem("work");
-						    Button deletePhone=new Button("X");
+						    Button deletePhone=new Button("X",new ClickListener() {
+								
+								@Override
+								@Deprecated
+								public
+								void onClick(Widget sender) {
+									// TODO Auto-generated method stub
+									//int removeIndex=Integer.parseInt(sender.getTitle());
+									for(int i=0;i<phonesPanel.getRowCount();i++)
+										if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
+										phonesPanel.removeRow(i);
+									}
+										
+										
+								}
+							});
 						    deletePhone.setHeight("25%");
 						    deletePhone.setWidth("15%");
-							hp.insert(l,0);
-						    hp.insert(phone, 1);
-						    hp.insert(lb, 2);
-						    hp.insert(deletePhone, 3);
-						    phonesPanel.insert(hp, index);
+						    
+						    int index=phonesPanel.getRowCount();
+						    l.setLayoutData(index);
+						    phone.setLayoutData(index);
+						    lb.setLayoutData(index);
+						    deletePhone.setLayoutData(index);
+						    phonesPanel.insertRow(index);
+						    phonesPanel.setWidget(index, 0, l);
+						    phonesPanel.setWidget(index, 1, phone);
+						    phonesPanel.setWidget(index, 2, lb);
+						    phonesPanel.setWidget(index, 3, deletePhone);
+						    
 						}
 					});
 				    addPhoneButton.setHeight("30%");
@@ -487,48 +563,111 @@ public class ContactBook implements EntryPoint {
 							List<Contact> list = dataProvider.getList();
 
 							for(Contact c:list)
-						    	if(c.contactId==selectedIndex){
-						    c.surname=surname.getValue();
-						    c.name=name.getValue();
-						    table.redraw();
+						    	if(c.getId()==selectedIndex){
+						    c.setSurname(surname.getValue());
+						    c.setName(name.getValue());
+						    c.getPhones().clear();
+						    for(int i=0;i<phonesPanel.getRowCount();i++){
+								TextBox number=(TextBox) phonesPanel.getWidget(i,1);
+								ListBox type=(ListBox) phonesPanel.getWidget(i,2);
+								Phone newPhone=new Phone();
+								newPhone.setNumber(number.getValue());
+								newPhone.setType(type.getItemText(type.getSelectedIndex()));
+								c.addPhone(newPhone);
+								service.update(c, new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										// TODO Auto-generated method stub
+										Window.alert(caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										// TODO Auto-generated method stub
+										table.redraw();
+									}
+								});
+								}
+						    
 						    hide();
 						    	}
 						}
 					});
-				    okButton.setHeight("30%");
+				    
 				    Button closeButton = new Button("Close", this);
-				    closeButton.setHeight("30%");
+				    FlexTable flexTable = new FlexTable();
+				    flexTable.setWidget(0, 0, surnameLabel);
+				    flexTable.setWidget(0, 1, surname);
+				    flexTable.setWidget(1, 0, nameLabel);
+				    flexTable.setWidget(1, 1, name);
+				    flexTable.setWidget(2, 0, phoneLabel);
+				    flexTable.setWidget(2, 1, addPhoneButton);
+				    flexTable.setWidget(3, 0, phonesPanel);
+				    flexTable.setWidget(4, 1, okButton);
+				    flexTable.setWidget(4, 2, closeButton);
+				    flexTable.setStyleName("panel flexTable");
+				    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
+				    for (int i = 0; i < flexTable.getRowCount(); i++) {
+				        for (int j = 0; j < flexTable.getCellCount(i); j++) {
+				            if ((j % 2) == 0) {
+				                flexTable.getFlexCellFormatter()
+				                         .setStyleName(i, j, "tableCell-even");
+				            } else {
+				                flexTable.getFlexCellFormatter()
+				                         .setStyleName(i, j, "tableCell-odd");
+				            }
+				        }
+				    }
 				    
-				    VerticalPanel dock = new VerticalPanel();
-				    HorizontalPanel hp1=new HorizontalPanel();
-				    hp1.add(surnameLabel);
-				    hp1.add(surname);
 				    
-				    dock.add(hp1);
-
-				    HorizontalPanel hp2=new HorizontalPanel();
-				    hp2.add(nameLabel);
-				    hp2.add(name);
-				    
-				    dock.add(hp2);
-				    		    
-				    dock.add(phoneLabel);		    
-				    dock.add(phonesPanel);
-				    dock.add(addPhoneButton);
-				    
-				    HorizontalPanel hp3=new HorizontalPanel();
-				    hp3.add(okButton);
-				    hp3.add(closeButton);
-				    
-				    dock.add(hp3);
-				    dock.setWidth("100%");
-				    setWidget(dock);
+				    setWidget(flexTable);
 				  }
 			  
 		  }
 		  public void onClick(Widget sender) {
 		    hide();
 		  }
+		 
+
 		}
-		
+	  class ExceptionDialog extends DialogBox implements ClickListener {
+		  public ExceptionDialog() {
+			
+		    setText("No contact is selected");
+		    
+		    InlineLabel message=new InlineLabel("Please choose the contact to make changes!");
+		     VerticalPanel vp=new VerticalPanel();
+		  Button ok=new Button("OK",new ClickListener() {
+			
+			@Override
+			@Deprecated
+			public
+			void onClick(Widget sender) {
+				// TODO Auto-generated method stub
+				hide();
+			}
+		});
+		  DOM.setElementAttribute(ok.getElement(), "id", "ok");
+		    vp.add(message);
+		    vp.add(ok);
+		    setWidget(vp);
+			  
+		  }
+		@Override
+		@Deprecated
+		public
+		void onClick(Widget sender) {
+			// TODO Auto-generated method stub
+			hide();
+		}
+		  
+		  
+	  }
+	  public AbsolutePanel setHidden(AbsolutePanel ap,boolean hidden)
+	  {	      
+	      String val = (hidden) ? "hidden" : "visible";
+	      DOM.setStyleAttribute(ap.getElement(), "overflow", val);
+		return ap;
+	  }
 	}

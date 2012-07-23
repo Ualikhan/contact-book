@@ -1,48 +1,67 @@
 package my.projects.contactbook.server;
 
+import java.util.List;
+
 import my.projects.contactbook.client.GreetingService;
+import my.projects.contactbook.server.dao.ContactBookDAO;
+import my.projects.contactbook.server.util.GWTUtil;
 import my.projects.contactbook.shared.FieldVerifier;
+import my.projects.contactbook.shared.model.Contact;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
-@SuppressWarnings("serial")
-public class GreetingServiceImpl extends RemoteServiceServlet implements
-		GreetingService {
+@Service("contactBookService")
+public class GreetingServiceImpl implements GreetingService {
 
-	public String greetServer(String input) throws IllegalArgumentException {
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidName(input)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException(
-					"Name must be at least 4 characters long");
-		}
 
-		String serverInfo = getServletContext().getServerInfo();
-		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
+	@Autowired
+	private ContactBookDAO dao;
 
-		// Escape data from the client to avoid cross-site script vulnerabilities.
-		input = escapeHtml(input);
-		userAgent = escapeHtml(userAgent);
-
-		return "Hello, " + input + "!<br><br>I am running " + serverInfo
-				+ ".<br><br>It looks like you are using:<br>" + userAgent;
+	@Transactional(readOnly=false)
+	@Override
+	public void delete(Contact contact) {
+		dao.delete(contact);
 	}
 
-	/**
-	 * Escape an html string. Escaping data received from the client helps to
-	 * prevent cross-site script vulnerabilities.
-	 * 
-	 * @param html the html string to escape
-	 * @return the escaped string
-	 */
-	private String escapeHtml(String html) {
-		if (html == null) {
-			return null;
+	@Transactional(readOnly=true)
+	@Override
+	public Contact get(Long id) {
+		Contact contact = dao.get(id);
+		if(contact != null) {
+			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
 		}
-		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
-				.replaceAll(">", "&gt;");
+	
+		return contact;
+	}
+
+	@Transactional(readOnly=true)
+	@Override
+	public List<Contact> list() {
+		List<Contact> contacts = dao.list();
+		for(Contact contact : contacts) {
+			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
+		}
+		return contacts;
+	}
+
+	@Transactional(readOnly=false)
+	@Override
+	public void update(Contact contact) {
+		dao.update(contact);
+	}
+	
+	@Transactional(readOnly=false)
+	@Override
+	public Long insert(Contact contact) {
+		return dao.insert(contact);
 	}
 }
+
+
+

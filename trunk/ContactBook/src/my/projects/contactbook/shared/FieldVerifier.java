@@ -39,4 +39,10 @@ public class FieldVerifier {
 		}
 		return name.length() > 3;
 	}
+	public static boolean isValidNumber(String name) {
+		if (name == null) {
+			return false;
+		}
+		return name.length()==10;
+	}
 }
