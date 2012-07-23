@@ -5,16 +5,28 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">
 
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>my.projects.contactbook.server.GreetingServiceImpl</servlet-class>
-  </servlet>
+  <!-- Context params -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>WEB-INF/*-context.xml</param-value>
+  </context-param>
   
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/contactbook/greet</url-pattern>
-  </servlet-mapping>
+  <!-- Listeners -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+
+  <!-- Servlets -->
+<servlet>
+<servlet-name>spring4gwt</servlet-name>
+<servlet-class>org.spring4gwt.server.SpringGwtRemoteServiceServlet</servlet-class>
+</servlet>  
+
+<servlet-mapping>
+<servlet-name>spring4gwt</servlet-name>
+<url-pattern>/contactbook/myservices/*</url-pattern>
+</servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
