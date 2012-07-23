@@ -23,7 +23,18 @@ h1 {
 .dialogVPanel {
   margin: 5px;
 }
-
+#addButton{
+	background-image: url("images/add.png");
+	
+}
+#editButton{
+	background-image: url("images/edit.png");
+	
+}
+#removeButton{
+	background-image: url("images/remove.png");
+	
+}
 .serverResponseLabelError {
   color: red;
 }
@@ -31,4 +42,13 @@ h1 {
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;
+}
+#ok{
+	margin:10px;
+	margin-left: 105px;
+	width: 50px;
+
+}
+#root{
+	margin:20px;
 }
