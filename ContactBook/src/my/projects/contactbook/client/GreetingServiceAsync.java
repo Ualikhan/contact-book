@@ -1,8 +1,11 @@
 package my.projects.contactbook.client;
 
+import java.io.Serializable;
 import java.util.List;
 
+import my.projects.contactbook.shared.model.City;
 import my.projects.contactbook.shared.model.Contact;
+import my.projects.contactbook.shared.model.Country;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,9 +18,22 @@ public interface GreetingServiceAsync {
 
 	void get(Long id, AsyncCallback<Contact> callback);
 
-	void list(AsyncCallback<List<Contact>> callback);
+	void list(int pageNum, AsyncCallback<List<Contact>> callback);
 
 	void update(Contact contact, AsyncCallback<Void> callback);
 	
 	void insert(Contact contact, AsyncCallback<Long> callback);
+
+	void listByQuery(String query, int pageNum,
+			AsyncCallback<List<Contact>> callback);
+
+	void listCountry(AsyncCallback<List<Country>> callback);
+	
+	
+	void getCountry(String name, AsyncCallback<Country> callback);
+
+	void getCity(String name, AsyncCallback<City> callback);
+
+	void listSize(AsyncCallback<Integer> callback);
+
 }
