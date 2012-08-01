@@ -1,12 +1,15 @@
 package my.projects.contactbook.server;
 
+import java.io.Serializable;
 import java.util.List;
 
 import my.projects.contactbook.client.GreetingService;
 import my.projects.contactbook.server.dao.ContactBookDAO;
 import my.projects.contactbook.server.util.GWTUtil;
 import my.projects.contactbook.shared.FieldVerifier;
+import my.projects.contactbook.shared.model.City;
 import my.projects.contactbook.shared.model.Contact;
+import my.projects.contactbook.shared.model.Country;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,19 +34,27 @@ public class GreetingServiceImpl implements GreetingService {
 
 	@Transactional(readOnly=true)
 	@Override
-	public Contact get(Long id) {
-		Contact contact = dao.get(id);
-		if(contact != null) {
-			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
-		}
-	
-		return contact;
+	public int listSize() {
+		int listSize = dao.listSize();
+		
+		return listSize;
 	}
+	
 
 	@Transactional(readOnly=true)
 	@Override
-	public List<Contact> list() {
-		List<Contact> contacts = dao.list();
+	public List<Contact> list(int pageNum) {
+		List<Contact> contacts = dao.list(pageNum);
+		for(Contact contact : contacts) {
+			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
+		}
+		return contacts;
+	}
+	
+	@Transactional(readOnly=true)
+	@Override
+	public List<Contact> listByQuery(String query,int pageNum) {
+		List<Contact> contacts = dao.listByQuery(query,pageNum);
 		for(Contact contact : contacts) {
 			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
 		}
@@ -60,6 +71,43 @@ public class GreetingServiceImpl implements GreetingService {
 	@Override
 	public Long insert(Contact contact) {
 		return dao.insert(contact);
+	}
+
+
+
+	@Transactional(readOnly=true)
+	@Override
+	public List<Country> listCountry() {
+		List<Country> countries = dao.listCountry();
+		for(Country country : countries) {
+			country.setCities(GWTUtil.makeGWTSafe(country.getCities()));
+		}
+		return countries;
+	}
+
+
+	@Transactional(readOnly=true)
+	@Override
+	public Contact get(Long id) {
+		// TODO Auto-generated method stub
+		Contact t=dao.get(id);
+		return t;
+	}
+
+	
+	@Transactional(readOnly=true)
+	public Country getCountry(String name) {
+		// TODO Auto-generated method stub
+		Country country=dao.getCountry(name);
+		country.setCities(GWTUtil.makeGWTSafe(country.getCities()));
+		return country;
+	}
+
+	@Transactional(readOnly=true)
+	public City getCity(String name) {
+		// TODO Auto-generated method stub
+		City city=dao.getCity(name);
+		return city;
 	}
 }
 
