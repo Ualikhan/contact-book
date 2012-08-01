@@ -15,6 +15,77 @@ h1 {
   font-size: 16pt;
 }
 
+.searchLabel {
+  color: graytext;
+  font-size: 16pt;
+}
+
+.searchText {
+  color: highlight;
+  font:oblique;
+  font-family: monospace;
+  font-size: 20pt;
+  margin-left: 10px;
+  height: 20%;
+  border-style: solid 1px;
+ 
+}
+
+.chooseNumberButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 28px;
+	height: 28px;
+	background: transparent url("images/next.png?v3");
+}
+.chooseNumberButton:hover{
+	border: solid 0px white;
+	text-align: center;
+	width: 28px;
+	height: 28px;
+	background: transparent url("images/nextOnHover.png");
+}
+.chooseNumberButtonActive{
+	border: solid 1px highlight;
+	text-align: center;
+	width: 28px;
+	height: 28px;
+	background: transparent url("images/nextOnHover.png");
+}
+
+.deletePhoneButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	background: transparent url("images/removePhone.png");
+}
+.deletePhoneButton:hover{
+	border: solid 0px white;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	background: transparent url("images/removePhoneOnHover.png");
+}
+
+.addPhoneButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/phone-icon-add-call.png");
+}
+
+.addPhoneButton:hover{
+	border: solid 1px black;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/phone-icon-add-callOnHover.png");
+}
+
+
+
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
   width: 400px;
@@ -23,32 +94,130 @@ h1 {
 .dialogVPanel {
   margin: 5px;
 }
-#addButton{
-	background-image: url("images/add.png");
-	
+.addButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/add.png?v4");
+	margin: 20px;
 }
-#editButton{
-	background-image: url("images/edit.png");
-	
+.addButton:hover{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/addOnHover.png");
+	margin: 20px;
 }
-#removeButton{
-	background-image: url("images/remove.png");
-	
+.addButton:active{
+	border: solid 1px activeborder;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/addOnHover.png");
+	margin: 20px;
+}
+.editButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/edit.png?v10");
+	margin: 20px;
+}
+.editButton:hover{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/editOnHover.png");
+	margin: 20px;
+}
+.editButton:active{
+	border: solid 1px activeborder;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/editOnHover.png");
+	margin: 20px;
+}
+.removeButton{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/remove.png?v10");
+	margin: 20px;
+}
+.removeButton:hover{
+	border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/removeOnHover.png");
+	margin: 20px;
+}
+.removeButton:active{
+	border: solid 1px activeborder;
+	text-align: center;
+	width: 32px;
+	height: 32px;
+	background: transparent url("images/removeOnHover.png");
+	margin: 20px;
 }
 .serverResponseLabelError {
   color: red;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
-}
 #ok{
 	margin:10px;
-	margin-left: 105px;
-	width: 50px;
+	width: 80px;
+margin-left: 90px;
+}
+#closeButtonDialog{
+  margin: 10px;
+  margin-left:20px;
+ width: 80px;
+}
+#okButtonDialog{
+	margin:10px;
+	width: 80px;
+margin-left: 20px;
+}
+#hp{
+	margin-left: 60px;
+}
+.okButton{
+	margin-top:10px;
+	margin-left: 10px;
+	width: 80px;
 
 }
-#root{
-	margin:20px;
+.closeButtonPhone{
+  border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 128px;
+	background: transparent url("images/previous.png");
 }
+.closeButtonPhone:hover{
+  border: solid 0px white;
+	text-align: center;
+	width: 32px;
+	height: 128px;
+	background: transparent url("images/previousOnHover.png");
+}
+.closeButtonPhone:active{
+  border: solid 1px activeborder;
+	text-align: center;
+	width: 32px;
+	height: 128px;
+	background: transparent url("images/previousOnHover.png");
+}
+#root{
+	margin:5px;
+	
+}
+
