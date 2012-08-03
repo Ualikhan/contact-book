@@ -27,9 +27,6 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 	final static String enterValidNumber="Please enter valid number!";
 		  DialogBox current;
 		  Grid phonesPanel;
-		 
-		  private GreetingServiceAsync service=GWT.create(GreetingService.class);
-			
 		  
 		  public ContactDialogBox(String action) {
 			  setPopupPosition(getPopupLeft()-100, getPopupTop());
@@ -167,12 +164,13 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 					if(validNumbers){
 					c.setPhones(phones);
 					
-			        service.insert(c, new AsyncCallback<Long>() {
+			        ContactBook.service.insert(c, new AsyncCallback<Long>() {
 						
 						@Override
 						public void onSuccess(Long result) {
 							c.setId(result);
 							list.add(c);
+							ContactBook.addNewContact();
 							ContactBook.table.redraw();
 						}
 						
@@ -192,10 +190,11 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 			});
 		    Button closeButton = new Button("Close", this);
 		    
-		    DOM.setElementAttribute(okButton.getElement(), "id", "okButtonDialog");
-		    DOM.setElementAttribute(closeButton.getElement(), "id", "closeButtonDialog");
 		    
 		    HorizontalPanel hp=new HorizontalPanel();
+		    hp.setStyleName("hp");
+		    okButton.setStyleName("okButtonDialog");
+		    closeButton.setStyleName("closeButtonDialog");
 		    hp.add(okButton);
 		    hp.add(closeButton);
 		    
@@ -208,7 +207,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 		    flexTable.setWidget(2, 1, addPhoneButton);
 		    flexTable.setWidget(3, 0, phonesPanel);
 		    flexTable.setWidget(4, 0, hp);
-		    DOM.setElementAttribute(hp.getElement(), "id", "hp");
+		    
 		    
 		    flexTable.setStyleName("panel flexTable");
 		    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
@@ -437,7 +436,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 								
 								}
 						    if(validNumbers){
-						    	service.update(c, new AsyncCallback<Void>() {
+						    	ContactBook.service.update(c, new AsyncCallback<Void>() {
 
 									@Override
 									public void onFailure(Throwable caught) {
@@ -459,6 +458,11 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 					});
 				    
 				    Button closeButton = new Button("Close", this);
+				    
+				    HorizontalPanel hp=new HorizontalPanel();
+				    hp.add(okButton);
+				    hp.add(closeButton);
+				    
 				    FlexTable flexTable = new FlexTable();
 				    flexTable.setWidget(0, 0, surnameLabel);
 				    flexTable.setWidget(0, 1, surname);
@@ -467,10 +471,17 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 				    flexTable.setWidget(2, 0, phoneLabel);
 				    flexTable.setWidget(2, 1, addPhoneButton);
 				    flexTable.setWidget(3, 0, phonesPanel);
-				    flexTable.setWidget(4, 1, okButton);
-				    flexTable.setWidget(4, 2, closeButton);
+				    flexTable.setWidget(4, 0,hp);
+				    
+				    hp.setStyleName("hp");
+				    okButton.setStyleName("okButtonDialog");
+				    closeButton.setStyleName("closeButtonDialog");
+				   
+				    
 				    flexTable.setStyleName("panel flexTable");
 				    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
+				    flexTable.getFlexCellFormatter().setColSpan(4, 0, 3);
+				    
 				    for (int i = 0; i < flexTable.getRowCount(); i++) {
 				        for (int j = 0; j < flexTable.getCellCount(i); j++) {
 				            if ((j % 2) == 0) {
