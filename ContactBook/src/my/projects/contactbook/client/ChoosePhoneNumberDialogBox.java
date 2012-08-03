@@ -126,9 +126,9 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 			  countryCode=new IntegerBox();
 			  countryCode.setMaxLength(4);
 			  cityCode=new TextBox();
-			  cityCode.setWidth("90%");
 			  cityCode.setMaxLength(7);
 			  numberText=new IntegerBox();
+			 
 			  table=new FlexTable();
 			  cityList=new ListBox();
 			  table.setWidget(0, 0, countryLabel);
@@ -139,6 +139,15 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 			  table.setWidget(2, 0, countryCode);
 			  table.setWidget(2, 1, cityCode);
 			  table.setWidget(2, 2, numberText);
+			  countryLabel.setStyleName("countryLabel");
+			  cityLabel.setStyleName("cityLabel");
+			  numberLabel.setStyleName("numberLabel");
+			  countryList.setStyleName("countryList");
+			  cityList.setStyleName("cityList");
+			  
+			  countryCode.setStyleName("countryCode");
+			  cityCode.setStyleName("cityCode");
+			  numberText.setStyleName("numberText");
 			  
 			  bottomPanel=new HorizontalPanel();
 			  okButton = new Button("OK", new ClickListener() {
@@ -156,7 +165,8 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 				});
 			   
 			  table.setWidget(3, 1, okButton);
-			  closeButton = new Button("<", this);
+			  closeButton = new Button();
+			  closeButton.addClickListener(this);
 			 
 			  okButton.setStyleName("okButton");
 			  closeButton.setStyleName("closeButtonPhone");
