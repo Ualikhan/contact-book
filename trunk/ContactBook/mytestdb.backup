@@ -1,0 +1,2235 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Started on 2012-08-04 18:49:32
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = off;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET escape_string_warning = off;
+
+--
+-- TOC entry 315 (class 2612 OID 16386)
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: postgres
+--
+
+CREATE PROCEDURAL LANGUAGE plpgsql;
+
+
+ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO postgres;
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 1502 (class 1259 OID 295068)
+-- Dependencies: 6
+-- Name: city; Type: TABLE; Schema: public; Owner: asd; Tablespace: 
+--
+
+CREATE TABLE city (
+    id bigint NOT NULL,
+    code character varying(255),
+    name character varying(255) NOT NULL,
+    country bigint NOT NULL
+);
+
+
+ALTER TABLE public.city OWNER TO asd;
+
+--
+-- TOC entry 1503 (class 1259 OID 295074)
+-- Dependencies: 1502 6
+-- Name: city_id_seq; Type: SEQUENCE; Schema: public; Owner: asd
+--
+
+CREATE SEQUENCE city_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.city_id_seq OWNER TO asd;
+
+--
+-- TOC entry 1805 (class 0 OID 0)
+-- Dependencies: 1503
+-- Name: city_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: asd
+--
+
+ALTER SEQUENCE city_id_seq OWNED BY city.id;
+
+
+--
+-- TOC entry 1806 (class 0 OID 0)
+-- Dependencies: 1503
+-- Name: city_id_seq; Type: SEQUENCE SET; Schema: public; Owner: asd
+--
+
+SELECT pg_catalog.setval('city_id_seq', 1749, true);
+
+
+--
+-- TOC entry 1504 (class 1259 OID 295076)
+-- Dependencies: 6
+-- Name: contact; Type: TABLE; Schema: public; Owner: asd; Tablespace: 
+--
+
+CREATE TABLE contact (
+    id bigint NOT NULL,
+    name character varying(255),
+    surname character varying(255)
+);
+
+
+ALTER TABLE public.contact OWNER TO asd;
+
+--
+-- TOC entry 1505 (class 1259 OID 295082)
+-- Dependencies: 6
+-- Name: contact_phones; Type: TABLE; Schema: public; Owner: asd; Tablespace: 
+--
+
+CREATE TABLE contact_phones (
+    contact_id bigint NOT NULL,
+    phones bytea
+);
+
+
+ALTER TABLE public.contact_phones OWNER TO asd;
+
+--
+-- TOC entry 1506 (class 1259 OID 295088)
+-- Dependencies: 6
+-- Name: country; Type: TABLE; Schema: public; Owner: asd; Tablespace: 
+--
+
+CREATE TABLE country (
+    id bigint NOT NULL,
+    code integer NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.country OWNER TO asd;
+
+--
+-- TOC entry 1507 (class 1259 OID 295091)
+-- Dependencies: 6
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: asd
+--
+
+CREATE SEQUENCE hibernate_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.hibernate_sequence OWNER TO asd;
+
+--
+-- TOC entry 1807 (class 0 OID 0)
+-- Dependencies: 1507
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: asd
+--
+
+SELECT pg_catalog.setval('hibernate_sequence', 1, false);
+
+
+--
+-- TOC entry 1785 (class 2604 OID 295093)
+-- Dependencies: 1503 1502
+-- Name: id; Type: DEFAULT; Schema: public; Owner: asd
+--
+
+ALTER TABLE city ALTER COLUMN id SET DEFAULT nextval('city_id_seq'::regclass);
+
+
+--
+-- TOC entry 1796 (class 0 OID 295068)
+-- Dependencies: 1502
+-- Data for Name: city; Type: TABLE DATA; Schema: public; Owner: asd
+--
+
+COPY city (id, code, name, country) FROM stdin;
+1	8	Аделаида [Adelaide]	133
+2	8	Албани [Albany]	133
+3	3	Алекзандра [Alexandra]	133
+4	8	Алис-Спрингс [Alice Springs]	133
+5	7	Арамак [Aramac]	133
+6	3	Арарат [Ararat]	133
+7	2	Армидейл [Armidale]	133
+8	5223	Абзам [Absam]	130
+9	2278	Абсдорф [Absdorf]	130
+10	6137	Абтенау [Abtenau]	130
+11	4846	Абфальтерсбах [Abfaltersbach]	130
+12	7472	Адаггер-Штифт [Ardagger Stift]	130
+13	3611	Адмонт [Admont]	130
+14	2682	Айзенштадт [Eisenstadt]	130
+15	5234	Аксамс [Axams]	130
+16	2824	Аллентштайг [Allentsteig]	130
+17	5579	Альбершвенде [Alberschwende]	130
+18	5336	Альпбах [Alpbach]	130
+19	3622	Альтаусзе [Altaussee]	130
+20	2522	Альтенмаркт [Altenmarkt], Грузия	130
+21	2674	Альтенмаркт-Теннеберг [Altenmarkt-Thenneberg]	130
+22	7723	Альтхайм [Altheim]	130
+23	7479	Амштеттен [Amstetten]	130
+24	3175	Ангер [Anger], Армения	130
+25	2739	Ангерн [Angern]	130
+26	2175	Апетлон [Apetlon]	130
+27	4255	Арнольдштайн [Arnoldstein]	130
+28	2642	Аспанг-Маркт [Aspang-Markt]	130
+29	7674	Атнанг-Пуххайм [Attnang-Puchheim]	130
+30	7666	Аттерзе [Attersee]	130
+31	5515	Ау [Au], Таджикистан	130
+32	3863	Афленц [Aflenz]	130
+33	5246	Ахенкирх [Achenkirch]	130
+34	7475	Ашбах Маркт [Aschbach Markt]	130
+35	50	Mobile GSM (Азерселл)	115
+36	55	Mobile GSM (Бакселл)	115
+37	562	Gramsb	48
+38	27	Chlef	39
+39	2	Golfe	47
+40	464	Mobile	84
+41	723	Mobile	84
+42	724	Mobile	84
+43	727	Mobile	84
+44	728	Mobile	84
+45	729	Mobile	84
+46	773	Mobile	84
+47	78	Mobile Бонайре	119
+48	79	Mobile Бонайре	119
+49	9560	Mobile Курасао	119
+50	9561	Mobile Курасао	119
+51	9562	Mobile Курасао	119
+52	9563	Mobile Курасао	119
+53	9566	Mobile Курасао	119
+54	9567	Mobile Курасао	119
+55	9568	Mobile Курасао	119
+56	96	Mobile Курасао	119
+57	4160	Mobile Саба	119
+58	4165	Mobile Саба	119
+59	51	Mobile Сен-Мартен	119
+60	56	Mobile Сен-Мартен	119
+61	57	Mobile Сен-Мартен	119
+62	59	Mobile Сен-Мартен	119
+63	3180	Mobile Синт-Эстатиус	119
+64	62	Mobile GSM	114
+65	63	Mobile GSM	114
+66	650	Mobile GSM	114
+67	651	Mobile GSM	114
+68	66	Mobile GSM	114
+69	68	Mobile GSM	114
+70	3447	1 Мая [1 de Mayo]	1
+71	2317	12 Октября [12 de Octubre]	1
+72	2924	17 Августа [17 de Aqosto]	1
+73	56	Mobile TDMA/GSM	118
+74	59	Mobile TDMA/GSM	118
+75	431	Барисал [Barisal]	153
+76	902-909	GSM	51
+77	912-92	GSM	51
+78	940-947	GSM	51
+79	96	GSM	51
+80	97	GSM	51
+81	98	GSM	51
+82	296	Mobile GSM	113
+83	292	Mobile NMT-450	113
+84	294	Mobile NMT-450	113
+85	8	Benque Viejo	30
+86	61	Chevigny	37
+87	59	Costende	37
+88	1	Котону [Cotonu]	209
+89	52	Bago	28
+90	1	Bahan	28
+91	81	Bahtoo	28
+92	558	Айтос [Ajtos]	137
+93	579	Албена [Albena]	137
+94	6071	Антоново [Antonovo]	137
+95	331	Асеновград [Asenovgrad]	137
+96	932	Буэна-Виста [Bueno Vista]	155
+97	49	Buzekara	34
+98	91	Абаететува [Abaetetuba]	125
+99	67	Акидауана [Aquidauana]	125
+100	83	Алагоа-Гранди [Alagoa Grande]	125
+101	75	Алагоиньяс [Alagoinhas]	125
+102	55	Алегрети [Alegrete]	125
+103	91	Аленкер [Alenquer]	125
+104	33	Алменара [Almenara]	125
+105	93	Алтамира [Altamira]	125
+106	66	Алту-Арагуая [Alto Araguaia]	125
+107	64	Анаполис [Anapolis]	125
+108	243	Ангра-Дус-Рейс [Angra dos Reis]	125
+109	18	Андрадина [Andradina]	125
+110	84	Анжикус [Anjicos]	125
+111	43	Апукарана [Apucarana]	125
+112	34	Арагуари [Araguari]	125
+113	79	Аракажу [Aracaju]	125
+114	48	Арарангуа [Ararangua]	125
+115	18	Арасатуба [Aracatuba]	125
+116	69	Арикумес [Ariquemes]	125
+117	81	Арковерди [Arcoverde]	125
+118	62	Аруанан [Aruana]	125
+119	2	Бандар-Сери--Бегаван [Bandar Seri Begawan]	152
+120	20-29	GSM	49
+121	22	Bujumbura	32
+122	23	Bujumbura	32
+123	24	Bujumbura	32
+124	25	Bujumbura	32
+125	27	Bujumbura	32
+126	8	Shaba	123
+127	6	Suray	123
+128	1873	Abbergavenny	5
+129	1487	Abbots Ripton	5
+130	1545	Aberaeron	5
+131	1654	Aberdovey	5
+132	1745	Abergele	5
+133	1340	Aberlour	5
+134	1758	Abersoch	5
+135	1495	Abertillery	5
+136	1339	Aboyne	5
+137	1904	Acomb	5
+138	1570	Aeron	5
+139	1236	Airdrie	5
+140	1728	Aldeburgh	5
+141	1252	Aldershot	5
+142	1975	Alford	5
+143	1454	Almondsbury	5
+144	1665	Alnmouth	5
+145	1420	Alton	5
+146	1539	Ambleside	5
+147	1980	Amesbury	5
+148	1269	Ammanford	5
+149	1439	Ampleforth	5
+150	1525	Ampthill	5
+151	1400	Ancaster	5
+152	1835	Ancrum	5
+153	1264	Andover	5
+154	2894	Antrim	5
+155	1520	Applecross	5
+156	1863	Ardgay	5
+157	1855	Ardgour	5
+158	70	DCS 1800 GSM VODAFON	41
+159	281	Anzoategui	20
+160	282	Anzoategui	20
+161	283	Anzoategui	20
+162	321	An Thi	19
+163	75	Mobile AMPS	98
+164	28	Mobile Celtel	98
+165	29	Mobile Celtel	98
+166	35	Mobile Celtel	98
+167	36	Mobile Celtel	98
+168	37	Mobile Celtel	98
+169	38	Mobile Celtel	98
+170	39	Mobile Celtel	98
+171	51	Mobile Celtel	98
+172	52	Mobile Celtel	98
+173	53	Mobile Celtel	98
+174	57	Mobile Celtel	98
+175	91	Mobile Celtel	98
+176	03	Mobile GSM Libertis	98
+177	04	Mobile GSM Libertis	98
+178	05	Mobile GSM Libertis	98
+179	06	Mobile GSM Libertis	98
+180	07	Mobile GSM Libertis	98
+181	20	Mobile GSM Libertis	98
+182	21	Mobile GSM Libertis	98
+183	22	Mobile GSM Libertis	98
+184	23	Mobile GSM Libertis	98
+185	24	Mobile GSM Libertis	98
+186	25	Mobile GSM Libertis	98
+187	26	Mobile GSM Libertis	98
+188	27	Mobile GSM Libertis	98
+189	61	Mobile GSM Libertis	98
+190	08	Mobile GSM Telecel	98
+191	09	Mobile GSM Telecel	98
+192	30	Mobile GSM Telecel	98
+193	31	Mobile GSM Telecel	98
+194	32	Mobile GSM Telecel	98
+195	33	Mobile GSM Telecel	98
+196	34	Mobile GSM Telecel	98
+197	80	Mobile GSM Telecel	98
+198	81	Mobile GSM Telecel	98
+199	420	Mobil COMCEL	79
+200	510	Mobil HAITEL	79
+201	851	Mobil IRIS	79
+202	330	Mobil RECTEL	79
+203	326	Adelphi	11
+204	331	Adventure	11
+205	773	Aishalton	11
+206	900-989	Abuko GSM Mobile	9
+207	21	Аккра [Accra]	139
+208	69036	GSM Bouygues Telecom	53
+209	69042	GSM Bouygues Telecom	53
+210	69043	GSM Bouygues Telecom	53
+211	69044	GSM Bouygues Telecom	53
+212	69045	GSM Bouygues Telecom	53
+213	69046	GSM Bouygues Telecom	53
+214	69069	GSM Bouygues Telecom	53
+215	69080	GSM Bouygues Telecom	53
+216	69081	GSM Bouygues Telecom	53
+217	69082	GSM Bouygues Telecom	53
+218	69083	GSM Bouygues Telecom	53
+219	69084	GSM Bouygues Telecom	53
+220	69085	GSM Bouygues Telecom	53
+221	69086	GSM Bouygues Telecom	53
+222	69066	GSM Dauphin Telecom Mobiles	53
+223	69030	GSM France Caraibes mobiles	53
+224	69031	GSM France Caraibes mobiles	53
+225	69032	GSM France Caraibes mobiles	53
+226	69033	GSM France Caraibes mobiles	53
+227	69034	GSM France Caraibes mobiles	53
+228	69035	GSM France Caraibes mobiles	53
+229	69037	GSM France Caraibes mobiles	53
+230	69038	GSM France Caraibes mobiles	53
+231	69039	GSM France Caraibes mobiles	53
+232	69040	GSM France Caraibes mobiles	53
+233	69041	GSM France Caraibes mobiles	53
+234	69047	GSM France Caraibes mobiles	53
+235	69048	GSM France Caraibes mobiles	53
+236	69049	GSM France Caraibes mobiles	53
+237	69050	GSM France Caraibes mobiles	53
+238	69051	GSM France Caraibes mobiles	53
+239	69052	GSM France Caraibes mobiles	53
+240	69053	GSM France Caraibes mobiles	53
+241	69054	GSM France Caraibes mobiles	53
+242	69055	GSM France Caraibes mobiles	53
+243	69056	GSM France Caraibes mobiles	53
+244	69057	GSM France Caraibes mobiles	53
+245	69058	GSM France Caraibes mobiles	53
+246	69059	GSM France Caraibes mobiles	53
+247	69060	GSM France Caraibes mobiles	53
+248	69061	GSM France Caraibes mobiles	53
+249	69062	GSM France Caraibes mobiles	53
+250	69063	GSM France Caraibes mobiles	53
+251	6906	GSM France Caraibes mobiles	53
+252	9	Аматитлан [Amatitlan]	142
+253	9	Антигуа [Antigua]	142
+254	69490	GSM Bouygues Telecom	54
+255	69491	GSM Bouygues Telecom	54
+256	69492	GSM Bouygues Telecom	54
+257	69420	GSM France Caraibes Mobiles	54
+258	69421	GSM France Caraibes Mobiles	54
+259	69422	GSM France Caraibes Mobiles	54
+260	69423	GSM France Caraibes Mobiles	54
+261	69424	GSM France Caraibes Mobiles	54
+262	69425	GSM France Caraibes Mobiles	54
+263	69426	GSM France Caraibes Mobiles	54
+264	69440	GSM France Caraibes Mobiles	54
+265	69441	GSM France Caraibes Mobiles	54
+266	69442	GSM France Caraibes Mobiles	54
+267	69443	GSM France Caraibes Mobiles	54
+268	69444	GSM France Caraibes Mobiles	54
+269	69445	GSM France Caraibes Mobiles	54
+270	61	Киндиа [Kindia]	208
+271	4	Конакри [Conacri]	208
+272	21	GSM France Caraibes Mobiles	57
+273	23	GSM France Caraibes Mobiles	57
+274	26	GSM France Caraibes Mobiles	57
+275	651	Аах у Трира [Aach b Trier]	124
+276	241	Аахен [Aachen]	124
+277	5237	Августдорф [Augustdorf]	124
+278	711	Аихвальд [Aichwald]	124
+279	3691	Айзенах [Eisenach]	124
+280	3364	Айзенхюттенштадт [Eisenhuttenstadt]	124
+281	3423	Айленбург [Eilenburg]	124
+282	5561	Айнбек [Einbeck]	124
+283	6246	Айх [Eich]	124
+284	3447	Альтенбург [Altenburg]	124
+285	3961	Альтентрептов [Altentreptow]	124
+286	5181	Альфельд Ляйне [Alfeld Leine]	124
+287	3331	Ангемюнде [Angemunde]	124
+288	3971	Анклам [Anklam]	124
+289	3733	Аннаберг-Буххольц [Annaberg-Buchholz]	124
+290	981	Ансбах [Ansbach]	124
+291	3644	Апольда [Apolda]	124
+292	3628	Арнштадт [Arnstadt]	124
+293	821	Аугсбург [Augsburg]	124
+294	3771	Ауе [Aue]	124
+295	3744	Ауербах [Auerbach]	124
+296	7841	Ахерн [Achern]	124
+297	6021	Ашаффенбург [Aschaffenburg]	124
+298	3473	Ашерслебен [Aschersleben]	124
+299	6	Mobile Service	117
+300	490000-499999	MOBIL GSM 900	80
+301	590000-599999	MOBIL GSM 900	80
+302	097	Mobile COSMOTE	109
+303	094	Mobile PANAFON	109
+304	093	Mobile STET	109
+305	774	Mobile Geosell GSM	111
+306	777	Mobile Geosell GSM	111
+307	932	Mobile Geosell GSM	111
+308	933	Mobile Geosell GSM	111
+309	939	Mobile Geosell GSM	111
+310	ABC1	Mobile IberiaTel NMT 450	111
+311	ABC3	Mobile IberiaTel NMT 450	111
+312	ABC5	Mobile IberiaTel NMT 450	111
+313	3226	Mobile IberiaTel NMT 450	111
+314	991	Mobile MagtiCom GSM	111
+315	995	Mobile MagtiCom GSM	111
+316	999	Mobile MagtiCom GSM	111
+317	3297	Mobile MegaCom AMPS	111
+318	975	Mobile MegaCom AMPS	111
+319	241	Mobil Tele Danmark	82
+320	242	Mobil Tele Danmark	82
+321	251	Mobil.	82
+322	267	Mobilix	82
+323	85	Mobile AMPS Comcell	101
+324	86	Mobile AMPS Gemocell	101
+325	2247	Mobile AMPS Intercel	101
+326	88	Mobile AMPS Starcel	101
+327	98	Mobile GSM Celtell	101
+328	99	Mobile GSM Celtell	101
+329	97	Mobile GSM Celtell	101
+330	89	Mobile GSM SAIT	101
+331	81	Mobile GSM Vodacom	101
+332	84	Mobile Intercel GSM	101
+333	424	Mobile CODETEL	108
+334	425	Mobile CODETEL	108
+335	426	Mobile CODETEL	108
+336	427	Mobile CODETEL	108
+337	428	Mobile CODETEL	108
+338	429	Mobile CODETEL	108
+339	451	Mobile CODETEL	108
+340	452	Mobile CODETEL	108
+341	453	Mobile CODETEL	108
+342	454	Mobile CODETEL	108
+343	767	Mobile CODETEL	108
+344	768	Mobile CODETEL	108
+345	769	Mobile CODETEL	108
+346	771	Mobile CODETEL	108
+347	772	Mobile CODETEL	108
+348	773	Mobile CODETEL	108
+349	774	Mobile CODETEL	108
+350	775	Mobile CODETEL	108
+351	776	Mobile CODETEL	108
+352	785	Mobile CODETEL	108
+353	786	Mobile CODETEL	108
+354	787	Mobile CODETEL	108
+355	879	Mobile ORANGE	108
+356	880	Mobile ORANGE	108
+357	881	Mobile ORANGE	108
+358	882	Mobile ORANGE	108
+359	883	Mobile ORANGE	108
+360	884	Mobile ORANGE	108
+361	885	Mobile ORANGE	108
+362	886	Mobile ORANGE	108
+363	889	Mobile ORANGE	108
+364	890	Mobile ORANGE	108
+365	15	10th of Ramadan	2
+366	2	15 May City	2
+367	2	Итимпи (Гарнетон) [Itimpi (Garneton)]	207
+368	117	Mobile	87
+369	118	Mobile	87
+370	2	Maale Adumim	74
+371	2	Mevasseret Zion	74
+372	521-529	Mobile Cellcom	74
+373	531-539	Mobile Cellcom	74
+374	581-589	Mobile Cellcom	74
+375	641-649	Mobile Cellcom	74
+376	591-599	Mobile Jawwal	74
+377	572-579	Mobile Mirs	74
+378	541-549	Mobile Orange	74
+379	551-559	Mobile Orange	74
+380	671-679	Mobile Orange	74
+381	501-509	Mobile Pelephone	74
+382	511-519	Mobile Pelephone	74
+383	561-569	Mobile Pelephone	74
+384	682-689	Mobile Pelephone	74
+385	79	Bareja	29
+386	79	Barwala	29
+387	911	Амбон [Amboina]	145
+388	795	GSM Fastlink	56
+389	796	GSM Fastlink	56
+390	797	GSM Fastlink	56
+391	798	GSM Fastlink	56
+392	799	GSM Fastlink	56
+393	77	GSM Mobilcom	56
+394	1	Адамия [Adamyia]	132
+395	235	Азизия [Aziziya]	132
+396	604	Акра [Aqra]	132
+397	1	Алвия [Alwiya]	132
+398	628	Амадия [Amadiya]	132
+399	43	Амара [Amara]	132
+400	40	Ашар [Ashar]	132
+401	612226	Alhaei	18
+402	664	Aligodarz	18
+403	642537	Amaleh Seyf	18
+404	64242	Andimeshk	18
+405	132344	Aqa Seyyed Sharif	18
+406	529	Arzaneh	18
+407	192475	Asb Chin	18
+408	41	Ardee	21
+409	826	Mobile	88
+410	840	Mobile	88
+411	846	Mobile	88
+412	870	Mobile	88
+413	881	Coruna	40
+414	981	Coruna	40
+415	330	Mobile ETACS TIM	110
+416	336	Mobile ETACS TIM	110
+417	337	Mobile ETACS TIM	110
+418	360	Mobile ETACS TIM	110
+419	368	Mobile ETACS TIM	110
+420	380	Mobile GSM Blu Tel	110
+421	383	Mobile GSM Blu Tel	110
+422	388	Mobile GSM Blu Tel	110
+423	389	Mobile GSM Blu Tel	110
+424	370	Mobile GSM IPSE 2000	110
+425	377	Mobile GSM IPSE 2000	110
+426	340	Mobile GSM Omnitel	110
+427	346	Mobile GSM Omnitel	110
+428	347	Mobile GSM Omnitel	110
+429	348	Mobile GSM Omnitel	110
+430	349	Mobile GSM Omnitel	110
+431	333	Mobile GSM TIM	110
+432	334	Mobile GSM TIM	110
+433	335	Mobile GSM TIM	110
+434	338	Mobile GSM TIM	110
+435	339	Mobile GSM TIM	110
+436	320	Mobile GSM Wind	110
+437	328	Mobile GSM Wind	110
+438	329	Mobile GSM Wind	110
+439	331	Mobile UMTS TIM	110
+440	3	Al Jabeen	17
+441	3	Al Jarrahi	17
+442	3	Al Marawah	17
+443	4	Al Mokha	17
+444	5	Alabr	17
+445	2	Пхеньян [Pyongyang]	213
+446	91	MOBIL	77
+447	92	MOBIL	77
+448	700	GSM Казахстан-Kcell	65
+449	733	GSM ТОО KaP-Tел	65
+450	23	Пномпень [Pnompenh]	212
+451	76-77	Mobile	85
+452	98-99	Mobile	85
+453	403	Айрон-Спрингс [Iron Springs]	136
+454	867	Аклавик [Aklavik]	136
+455	403	Аклавик [Aklavik]	136
+456	780	Аллайанс [Alliance]	136
+457	403	Аллайанс [Alliance]	136
+458	780	Альберта-Бич [Alberta Beach]	136
+459	403	Альберта-Бич [Alberta Beach]	136
+460	403	Альтарио [Altario]	136
+461	780	Андру [Andrew]	136
+462	403	Андру [Andrew]	136
+463	780	Анзак [Anzac]	136
+464	403	Анзак [Anzac]	136
+465	867	Арктик-Бей [Arctic Bay]	136
+466	819	Арктик-Бей [Arctic Bay]	136
+467	403	Арроувуд [Arrowwood]	136
+468	780	Атабаска [Athabasca]	136
+469	403	Атабаска [Athabasca]	136
+470	28	остров Гран-Канария [All city.]	211
+471	22	остров Тенерифе [All city.]	211
+472	53	GSM (Mobile)	52
+473	55	GSM (Mobile)	52
+474	58	GSM (Mobile)	52
+475	150	Ати-Ривер [Athi River]	148
+476	998	Mobile	89
+477	994	Mobile CYTA GSM	89
+478	995	Mobile CYTA GSM	89
+479	996	Mobile CYTA GSM	89
+480	992	Mobile NMT 900	89
+481	997	Ahegi	13
+482	937	Akesai	13
+483	997	Akesu	13
+484	908	Aketao	13
+485	483	Alashangi	13
+486	476	Alukergin	13
+487	896	Anduo	13
+488	556	Anging	13
+489	536	Angiu	13
+490	572	Anji	13
+491	433	Antu	13
+492	816	Anxian	13
+493	736	Anxiang	13
+494	312	Anxin	13
+495	372	Anyangxian	13
+496	791	Anyi	13
+497	832	Anyue	13
+498	357	Anze	13
+499	911	Anzhai	13
+500	476	Aohangi	13
+501	482	Archan	13
+502	470	Arongqi	13
+503	908	Atushi	13
+504	997	Awati	13
+505	4	Abejorral	7
+506	5	Aguachica	7
+507	4	Alejandria	7
+508	4	Amalei	7
+509	692	Canasi	35
+510	6	Mobil	78
+511	522	AYSAT SISTEM	25
+512	21	Вьентьян [Vientiane]	206
+513	693	LMT (Mobile Network NMT)	73
+514	663	LMT (Mobile)	73
+515	664	LTM (Mobile Network GSM)	73
+516	694	LTM (Mobile Network GSM)	73
+517	1	Бейрут [Beirut]	154
+518	282	Аджалат [Ajalat]	134
+519	65	Mobile Bite GSM	104
+520	681	Mobile Bite GSM	104
+521	685	Mobile Bite GSM	104
+522	689	Mobile Bite GSM	104
+523	699	Mobile Bite GSM	104
+524	679	Mobile Nelte	104
+525	61	Mobile Omnitel GSM	104
+526	680	Mobile Omnitel GSM	104
+527	682	Mobile Omnitel GSM	104
+528	686	Mobile Omnitel GSM	104
+529	687	Mobile Omnitel GSM	104
+530	688	Mobile Omnitel GSM	104
+531	698	Mobile Omnitel GSM	104
+532	67	Mobile Tele-2	104
+533	683	Mobile Tele-2	104
+534	684	Mobile Tele-2 DCS-1800	104
+535	60()	International Mobility Services	71
+536	61()	International Mobility Services	71
+537	62()	International Mobility Services	71
+538	63()	International Mobility Services	71
+539	64()	International Mobility Services	71
+540	65	International Mobility Services	71
+541	66	International Mobility Services	71
+542	67	International Mobility Services	71
+543	68	International Mobility Services	71
+544	091	GSM TANGO	63
+545	098	GSM TANGO	63
+546	021	GSM-Lux GSM	63
+547	028	GSM-Lux GSM	63
+548	25	Mobile Cell Plus	105
+549	75	Mobile Cell Plus	105
+550	421	Mobile Emtel	105
+551	422	Mobile Emtel	105
+552	423	Mobile Emtel	105
+553	491	Mobile Emtel	105
+554	492	Mobile Emtel	105
+555	493	Mobile Emtel	105
+556	497	Mobile Emtel	105
+557	498	Mobile Emtel	105
+558	499	Mobile Emtel	105
+559	720	Mobile Emtel	105
+560	721	Mobile Emtel	105
+561	729	Mobile Emtel	105
+562	597	Mobile Analog	102
+563	598	Mobile Analog	102
+564	64	Mobile GSM	102
+565	20+5	Амбатундразака [Ambatondrazaka]	144
+566	20+4	Амбуситра [Ambositra]	144
+567	20+2	Антананариву [Antananarivo]	144
+568	20+8	Анциранана [Antsiranana]	144
+569	20+6	Анцухихи [Antsohihy]	144
+570	70	Mobile	90
+571	9	Mobil.Celter Malawi Limited	83
+572	122	Mobile	92
+573	123	Mobile	92
+574	124	Mobile	92
+575	125	Mobile	92
+576	126	Mobile	92
+577	127	Mobile	92
+578	128	Mobile	92
+579	129	Mobile	92
+580	22	Бамако [Bamako]	150
+581	7	Mobile	96
+582	79	Go Mobile GSM	46
+583	610	Mobile Телеком Марокко	121
+584	611	Mobile Телеком Марокко	121
+585	612	Mobile Телеком Марокко	121
+586	613	Mobile Телеком Марокко	121
+587	614	Mobile Телеком Марокко	121
+588	615	Mobile Телеком Марокко	121
+589	616	Mobile Телеком Марокко	121
+590	617	Mobile Телеком Марокко	121
+591	618	Mobile Телеком Марокко	121
+592	619	Mobile Телеком Марокко	121
+593	620	Mobile Телеком Марокко	121
+594	621	Mobile Телеком Марокко	121
+595	660	Mobile Телеком Марокко	121
+596	661	Mobile Телеком Марокко	121
+597	669	Mobile Телеком Марокко	121
+598	670	Mobile Телеком Марокко	121
+599	671	Mobile Телеком Марокко	121
+600	681	Mobile Телеком Марокко	121
+601	684	Mobile Телеком Марокко	121
+602	630	Mobile Телеком Меди	121
+603	631	Mobile Телеком Меди	121
+604	636	Mobile Телеком Меди	121
+605	638	Mobile Телеком Меди	121
+606	639	Mobile Телеком Меди	121
+607	640	Mobile Телеком Меди	121
+608	641	Mobile Телеком Меди	121
+609	645	Mobile Телеком Меди	121
+610	649	Mobile Телеком Меди	121
+611	69670	GSM Bouygues Telecom	55
+612	69671	GSM Bouygues Telecom	55
+613	69672	GSM Bouygues Telecom	55
+614	69673	GSM Bouygues Telecom	55
+615	69674	GSM Bouygues Telecom	55
+616	69690	GSM Bouygues Telecom	55
+617	69691	GSM Bouygues Telecom	55
+618	69692	GSM Bouygues Telecom	55
+619	69693	GSM Bouygues Telecom	55
+620	69694	GSM Bouygues Telecom	55
+621	69695	GSM Bouygues Telecom	55
+622	69696	GSM Bouygues Telecom	55
+623	69697	GSM Bouygues Telecom	55
+624	69698	GSM Bouygues Telecom	55
+625	69620	GSM France Caraibes mobiles	55
+626	69621	GSM France Caraibes mobiles	55
+627	69622	GSM France Caraibes mobiles	55
+628	69623	GSM France Caraibes mobiles	55
+629	69624	GSM France Caraibes mobiles	55
+630	69625	GSM France Caraibes mobiles	55
+631	69626	GSM France Caraibes mobiles	55
+632	69627	GSM France Caraibes mobiles	55
+633	69628	GSM France Caraibes mobiles	55
+634	69629	GSM France Caraibes mobiles	55
+635	69630	GSM France Caraibes mobiles	55
+636	69631	GSM France Caraibes mobiles	55
+637	69632	GSM France Caraibes mobiles	55
+638	69633	GSM France Caraibes mobiles	55
+639	69634	GSM France Caraibes mobiles	55
+640	69635	GSM France Caraibes mobiles	55
+641	69636	GSM France Caraibes mobiles	55
+642	69637	GSM France Caraibes mobiles	55
+643	69638	GSM France Caraibes mobiles	55
+644	69639	GSM France Caraibes mobiles	55
+645	69640	GSM France Caraibes mobiles	55
+646	69641	GSM France Caraibes mobiles	55
+647	69642	GSM France Caraibes mobiles	55
+648	69643	GSM France Caraibes mobiles	55
+649	69644	GSM France Caraibes mobiles	55
+650	69645	GSM France Caraibes mobiles	55
+651	69646	GSM France Caraibes mobiles	55
+652	69647	GSM France Caraibes mobiles	55
+653	6964	GSM France Caraibes mobiles	55
+654	429	Абасоло [Abasolo]	127
+655	835	Абасоло [Abasolo]	127
+656	923	Агуа-Дульсе [Agua Dulce]	127
+657	633	Агуа-Приета [Agua Prieta]	127
+658	892	Агуалегуас [Agualeguas]	127
+659	449	Агуаскальентес [Aguascalientes]	127
+660	274	Акалтан-де-Перес-Фигероа [Acatkan de Perez Figueroa]	127
+661	417	Акамбаро [Acambaro]	127
+662	988	Акансех [Acanceh]	127
+663	325	Акапонета [Acaponeta]	127
+664	744	Акапулько [Acapulco]	127
+665	387	Акатлан-де-Хуарес [Acatlan de Juarez]	127
+666	924	Акаюкан [Acayucan]	127
+667	623	Акончи [Aconchi]	127
+668	279	Актопан [Actopan]	127
+669	772	Актопан [Actopan]	127
+670	647	Аламос [Alamos]	127
+671	297	Альварадо [Alvarado]	127
+672	862	Альенде [Allende]	127
+673	826	Альенде [Allende]	127
+674	637	Альтар [Altar]	127
+675	226	Альтотонга [Altotonga]	127
+676	751	Амакусак [Amacuzac]	127
+677	374	Аматитан [Amatitan]	127
+678	271	Аматлан [Amatlan]	127
+679	448	Амеалько [Amealco]	127
+680	375	Амека [Ameca]	127
+681	587	Амекамека [Amecameca]	127
+682	697	Ангостура [Angostura]	127
+683	832	Антигуо-Морелос [Antiguo Morelos]	127
+684	51	Chimolo	38
+685	80	Mobile Интерднестрком	120
+686	86	Mobile Интерднестрком	120
+687	87	Mobile Интерднестрком	120
+688	88	Mobile Интерднестрком	120
+689	89	Mobile Интерднестрком	120
+690	94	Moldcell GSM Networks	120
+691	95	Moldcell GSM Networks	120
+692	96	Mobile AMPS	99
+693	99	Mobile GSM	99
+694	67	Abenab	8
+695	63	Aminuis	8
+696	6642	Anamulenge	8
+697	67	Andara	8
+698	67	Anker	8
+699	67	Aoba	8
+700	64	Arandis	8
+701	668	Asab	8
+702	77	Arghachanchi	23
+703	39	Абеокута [Abikuta]	128
+704	9	Агбаджа [Abuja]	128
+705	34	Акерре [Akerre]	128
+706	118	Aagtekerke	3
+707	297	Aalsmeerderbrug	3
+708	519	Aalzum	3
+709	58	Aegum	3
+710	23	Aerdenhout	3
+711	297	Amstelhoek	3
+712	46	Amstenrade	3
+713	524	Anevelde	3
+714	516	Appelscha	3
+715	118	Arnemuiden	3
+716	345	Asch	3
+717	75	Assendelft	3
+718	511	Augsbuurt	3
+719	512	Augustinusga	3
+720	501	GLOBALSTAR	45
+721	502	GLOBALSTAR	45
+722	503	GLOBALSTAR	45
+723	504	GLOBALSTAR	45
+724	505	GLOBALSTAR	45
+725	506	GLOBALSTAR	45
+726	507	GLOBALSTAR	45
+727	508	GLOBALSTAR	45
+728	509	GLOBALSTAR	45
+729	890	GLOBALSTAR	45
+730	891	GLOBALSTAR	45
+731	892	GLOBALSTAR	45
+732	27	Mobile	93
+733	77-80	GSM Mobiles	59
+734	92	GSM NetCom	61
+735	93	GSM NetCom	61
+736	986	GSM NetCom	61
+737	987	GSM NetCom	61
+738	988	GSM NetCom	61
+739	989	GSM NetCom	61
+740	90	GSM Telenor Mobil	61
+741	91	GSM Telenor Mobil	61
+742	95	GSM Telenor Mobil	61
+743	4	Hatta	68
+744	91	Abazai	4
+745	761	Abdo	4
+746	41	Adda Baghwala	4
+747	462	Adda Basheerabad	4
+748	471	Adda Chhabeel	4
+749	432	Adda Gopalpur	4
+750	41	Adda Khanuana	4
+751	694	Adda Rafiqabad	4
+752	4949	Adhian	4
+753	571	Adhra Khurd	4
+754	939	Agarai	4
+755	81	Aghbarg	4
+756	883	Ahmed Wal	4
+757	541	Aima Ladhian	4
+758	442	Akbar Chowk	4
+759	923	Akora Khattak	4
+760	933	Alpuri	4
+761	451	Anwarabad	4
+762	933	Ashrait	4
+763	987	Attar Shesha	4
+764	91	Aza Khail	4
+765	CC+SN	Все города. [All city.]	196
+766	535	Acahay	10
+767	4495	Mobile BELLSOUTH (Ancash)	103
+768	5493	Mobile BELLSOUTH (Арекипа)	103
+769	5494	Mobile BELLSOUTH (Арекипа)	103
+770	5495	Mobile BELLSOUTH (Арекипа)	103
+771	3493	Mobile BELLSOUTH (Ика)	103
+772	3494	Mobile BELLSOUTH (Ика)	103
+773	3495	Mobile BELLSOUTH (Ика)	103
+774	9493	Mobile BELLSOUTH (Икитос)	103
+775	9494	Mobile BELLSOUTH (Икитос)	103
+776	9495	Mobile BELLSOUTH (Икитос)	103
+777	8493	Mobile BELLSOUTH (Куско)	103
+778	8494	Mobile BELLSOUTH (Куско)	103
+779	8495	Mobile BELLSOUTH (Куско)	103
+780	185	Mobile BELLSOUTH (Лима)	103
+781	191	Mobile BELLSOUTH (Лима)	103
+782	192	Mobile BELLSOUTH (Лима)	103
+783	193	Mobile BELLSOUTH (Лима)	103
+784	194	Mobile BELLSOUTH (Лима)	103
+785	195	Mobile BELLSOUTH (Лима)	103
+786	5492	Mobile BELLSOUTH (Пуно)	103
+787	7493	Mobile BELLSOUTH (Пьюра)	103
+788	5491	Mobile BELLSOUTH (Такна)	103
+789	4493	Mobile BELLSOUTH (Трухильо)	103
+790	4494	Mobile BELLSOUTH (Трухильо)	103
+791	6493	Mobile BELLSOUTH (Уанкайо)	103
+792	6494	Mobile BELLSOUTH (Уанкайо)	103
+793	6495	Mobile BELLSOUTH (Уанкайо)	103
+794	7495	Mobile BELLSOUTH (Чиклайо)	103
+795	7494	Mobile BELLSOUTH (Чиклайо/Пьюра)	103
+796	1810	Mobile NEXTEL (Лима)	103
+797	1811	Mobile NEXTEL (Лима)	103
+798	1812	Mobile NEXTEL (Лима)	103
+799	1813	Mobile NEXTEL (Лима)	103
+800	1814	Mobile NEXTEL (Лима)	103
+801	1815	Mobile NEXTEL (Лима)	103
+802	1816	Mobile NEXTEL (Лима)	103
+803	1817	Mobile NEXTEL (Лима)	103
+804	1818	Mobile NEXTEL (Лима)	103
+805	1819	Mobile NEXTEL (Лима)	103
+806	4461	Mobile TELEFONICA (Ancash)	103
+807	4462	Mobile TELEFONICA (Ancash)	103
+808	846	Mobile TELEFONICA (Апуримак/Куско/Мадре)	103
+809	8498	Mobile TELEFONICA (Апуримак/Куско/Мадре)	103
+810	5460	Mobile TELEFONICA (Арекипа)	103
+811	5469	Mobile TELEFONICA (Арекипа)	103
+812	5461	Mobile TELEFONICA (Арекипа/Мокегуя)	103
+813	5498	Mobile TELEFONICA (Арекипа/Мокегуя)	103
+814	5462	Mobile TELEFONICA (Арекипа/Пуно)	103
+815	5466	Mobile TELEFONICA (Арекипа/Пуно/Мокегуя)	103
+816	5467	Mobile TELEFONICA (Арекипа/Пуно/Мокегуя)	103
+817	5463	Mobile TELEFONICA (Арекипа/Пуно/Такна)	103
+818	5465	Mobile TELEFONICA (Арекипа/Такна)	103
+819	5497	Mobile TELEFONICA (Арекипа/Такна)	103
+820	5499	Mobile TELEFONICA (Арекипа/Такна)	103
+821	346	Mobile TELEFONICA (Ика)	103
+822	3498	Mobile TELEFONICA (Ика)	103
+823	9498	Mobile TELEFONICA (Икитос)	103
+824	946	Mobile TELEFONICA (Икитос/Сан-Мартин)	103
+825	4499	Mobile TELEFONICA (Кахамарка/Чачапояс)	103
+826	186	Mobile TELEFONICA (Лима)	103
+827	187	Mobile TELEFONICA (Лима)	103
+828	188	Mobile TELEFONICA (Лима)	103
+829	189	Mobile TELEFONICA (Лима)	103
+830	190	Mobile TELEFONICA (Лима)	103
+831	196	Mobile TELEFONICA (Лима)	103
+832	197	Mobile TELEFONICA (Лима)	103
+833	198	Mobile TELEFONICA (Лима)	103
+834	199	Mobile TELEFONICA (Лима)	103
+835	44680	Mobile TELEFONICA (Мокегуя/Пуно/Такна)	103
+836	44687	Mobile TELEFONICA (Мокегуя/Пуно/Такна)	103
+837	44688	Mobile TELEFONICA (Мокегуя/Пуно/Такна)	103
+838	44689	Mobile TELEFONICA (Мокегуя/Пуно/Такна)	103
+839	5464	Mobile TELEFONICA (Мокегуя/Такна)	103
+840	6498	Mobile TELEFONICA (Пукальпа)	103
+841	55	Blblag	31
+842	13	Brzozow	31
+843	93	GSM-Optimus	67
+844	96	GSM-TMN	67
+845	91	GSM-Telecel	67
+846	69200	GSM Orange	62
+847	69201	GSM Orange	62
+848	69202	GSM Orange	62
+849	69203	GSM Orange	62
+850	69204	GSM Orange	62
+851	69205	GSM Orange	62
+852	69207	GSM Orange	62
+853	69208	GSM Orange	62
+854	69209	GSM Orange	62
+855	69220	GSM Orange	62
+856	69221	GSM Orange	62
+857	69222	GSM Orange	62
+858	69223	GSM Orange	62
+859	69224	GSM Orange	62
+860	69225	GSM Orange	62
+861	39022	АБАКАН, Хакасия республика	126
+862	3916322	АБАН, Красноярский край	126
+863	35355	АБДУЛИНО, Оренбургская область	126
+864	86150	АБИНСК, Краснодарский край	126
+865	35140	АГАПОВКА, Челябинская область	126
+866	30239	АГИНСКОЕ, Забайкальский край	126
+867	39142	АГИНСКОЕ, Красноярский край	126
+868	85551	АГРЫЗ, Татарстан республика	126
+869	35365	АДАМОВКА, Оренбургская область	126
+870	8622	АДЛЕР, Краснодарский край	126
+871	87772	АДЫГЕЙСК, Адыгея республика	126
+872	85511	АЗНАКАЕВО, Татарстан республика	126
+873	86342	АЗОВ, Ростовская область	126
+874	82134	АЙКИНО, Коми республика	126
+875	35335	АКБУЛАК, Оренбургская область	126
+876	86350	АКСАЙ, Ростовская область	126
+877	34993	АКСАРКА, Ямало-Ненецкий АО	126
+878	84344	АКСУБАЕВО, Татарстан республика	126
+879	85552	АКТАНЫШ, Татарстан республика	126
+1108	444	Айгуа [Aigua]	135
+880	30231	АКША, Забайкальский край	126
+881	34758	АКЪЯР	126
+882	86731	АЛАГИР, Северная Осетия республика	126
+883	34346	АЛАПАЕВСК, Свердловская область	126
+884	83531	АЛАТЫРЬ, Чувашия республика	126
+885	41145	АЛДАН, Саха (Якутия) республика	126
+886	38553	АЛЕЙСК, Алтайский край	126
+887	49158	АЛЕКСАНДРО-НЕВСКИЙ, Рязанская область	126
+888	84578	АЛЕКСАНДРОВ ГАЙ, Саратовская область	126
+889	49244	АЛЕКСАНДРОВ, Владимирская область	126
+890	35359	АЛЕКСАНДРОВКА, Оренбургская область	126
+891	248	Arges	22
+892	623	Agua Fria	12
+893	602	Agua Fria	12
+894	520	Aguila	12
+895	928	Aguila	12
+896	225	Albany	12
+897	504	Albany	12
+898	804	Alberta	12
+899	434	Alberta	12
+900	517	Alger	12
+901	989	Alger	12
+902	804	Allwood	12
+903	434	Allwood	12
+904	804	Altavista	12
+905	434	Altavista	12
+906	516	Amagansett	12
+907	631	Amagansett	12
+908	804	Amherst	12
+909	434	Amherst	12
+910	516	Amityville	12
+911	631	Amityville	12
+912	978	Andover	12
+913	508	Andover	12
+914	636	Antonia	12
+915	314	Antonia	12
+916	804	Appomattox	12
+917	434	Appomattox	12
+918	804	Arvonia	12
+919	434	Arvonia	12
+920	912	Ashburn	12
+921	229	Ashburn	12
+922	941	Auburndale	12
+923	863	Auburndale	12
+924	941	Avon Park	12
+925	863	Avon Park	12
+926	8	Mobile	91
+927	3	Абкайк [Abqaiq]	131
+928	7	Абха [Abha]	131
+929	4	Аръар [Arar]	131
+930	60	GSM Mobile Network	58
+931	61	GSM Mobile Network	58
+932	51	Mobile	86
+933	52	Mobile	86
+934	55	Mobile	86
+935	56	Mobile	86
+936	57	Mobile	86
+937	58	Mobile	86
+938	71	Mobile	86
+939	72	Mobile	86
+940	77	Mobile	86
+941	67	MOBIL GSM SENTEL	81
+942	68	MOBIL GSM SENTEL	81
+943	69	MOBIL GSM SENTEL	81
+944	63	MOBIL GSM SONATEL-ALIZE	81
+945	64	GSM Telecom Srbija	64
+946	9088-9089	Mobile	94
+947	9091-9093	Mobile	94
+948	9105-9106	Mobile	94
+949	9110-9119	Mobile	94
+950	9120	Mobile	94
+951	9130-9131	Mobile	94
+952	9365	Mobile CDMA	94
+953	9474	Mobile CDMA	94
+954	9696-9699	Mobile CDMA	94
+955	9740-9741	Mobile CDMA	94
+956	9067-9069	Mobile GSM	94
+957	9100-9104	Mobile GSM	94
+958	900	Mobile GSM 1800	94
+959	902	Mobile GSM 1800	94
+960	9057	Mobile GSM 1800	94
+961	9060-9066	Mobile GSM 1800	94
+962	9350-9351	Mobile GSM 1800	94
+963	9371-9372	Mobile GSM 1800	94
+964	938	Mobile GSM 1800	94
+965	9443-9446	Mobile GSM 1800	94
+966	945	Mobile GSM 1800	94
+967	948	Mobile GSM 1800	94
+968	9629	Mobile GSM 1800	94
+969	964-965	Mobile GSM 1800	94
+970	9710-9712	Mobile GSM 1800	94
+971	9716	Mobile GSM 1800	94
+972	972	Mobile GSM 1800	94
+973	977	Mobile GSM 1800	94
+974	9806-9807	Mobile GSM 1800	94
+975	9850-9860	Mobile GSM 1800	94
+976	9866	Mobile GSM 1800	94
+977	9868-9869	Mobile GSM 1800	94
+978	901	Mobile GSM 900	94
+979	9030-9056	Mobile GSM 900	94
+980	9058-9059	Mobile GSM 900	94
+981	9070-9074	Mobile GSM 900	94
+982	9081-9087	Mobile GSM 900	94
+983	9199	Mobile GSM 900	94
+984	934	Mobile GSM 900	94
+985	9352-9364	Mobile GSM 900	94
+986	9366-9370	Mobile GSM 900	94
+987	9373-9379	Mobile GSM 900	94
+988	939	Mobile GSM 900	94
+989	9430-9442	Mobile GSM 900	94
+990	9447-9449	Mobile GSM 900	94
+991	9460-9473	Mobile GSM 900	94
+992	9475-9479	Mobile GSM 900	94
+993	9610-9628	Mobile GSM 900	94
+994	963	Mobile GSM 900	94
+995	9660-9695	Mobile GSM 900	94
+996	9713-9715	Mobile GSM 900	94
+997	973	Mobile GSM 900	94
+998	9742-9769	Mobile GSM 900	94
+999	978-	Mobile GSM 900	94
+1000	93	Mobile	97
+1001	94	Mobile	97
+1002	47	Hnusta	69
+1003	31	GSM MOBITEL	60
+1004	41	GSM MOBITEL	60
+1005	40	GSM SIMOBIL	60
+1006	2	Burao	33
+1007	21	Атбара [Atbara]	147
+1008	2	Фритаун [Freetown]	214
+1009	918	Babilon-Mobile	27
+1010	2	Бангкок [Bangkok]	151
+1011	90	Mobile AMPS (CHT-LDM)	100
+1012	911	Mobile AMPS (CHT-LDM)	100
+1013	962	Mobile CT2 Service	100
+1014	965	Mobile CT2 Service	100
+1015	967	Mobile CT2 Service	100
+1016	968	Mobile CT2 Service	100
+1017	969	Mobile CT2 Service	100
+1018	937	Mobile DCS (CHT-LDM)	100
+1019	916	Mobile DCS (FarEas Tone)	100
+1020	917	Mobile DCS (FarEas Tone)	100
+1021	930	Mobile DCS (FarEas Tone)	100
+1022	936	Mobile DCS (FarEas Tone)	100
+1023	955	Mobile DCS (FarEas Tone)	100
+1024	913	Mobile DCS (KGT)	100
+1025	915	Mobile DCS (KGT)	100
+1026	925	Mobile DCS (KGT)	100
+1027	927	Mobile DCS (KGT)	100
+1028	938	Mobile DCS (KGT)	100
+1029	918	Mobile DCS (TCC)	100
+1030	920	Mobile DCS (TCC)	100
+1031	922	Mobile DCS (TCC)	100
+1032	935	Mobile DCS (TCC)	100
+1033	939	Mobile DCS (TCC)	100
+1034	952	Mobile DCS (TCC)	100
+1035	953	Mobile DCS (TCC)	100
+1036	958	Mobile DCS (TCC)	100
+1037	910	Mobile GSM (CHT-LDM)	100
+1038	912	Mobile GSM (CHT-LDM)	100
+1039	932	Mobile GSM (CHT-LDM)	100
+1040	933	Mobile GSM (CHT-LDM)	100
+1041	931	Mobile GSM (FET,Mobitai,TA)	100
+1042	923	Mobile GSM (Mobitai)	100
+1043	929	Mobile GSM (Trans Asia)	100
+1044	956	Mobile GSM (Trans Asia)	100
+1045	919	Mobile GSM,DCS (CHT-LDM)	100
+1046	921	Mobile GSM,DCS (CHT-LDM)	100
+1047	928	Mobile GSM,DCS (CHT-LDM)	100
+1048	926	Mobile GSM,DCS (FarEas Tone)	100
+1049	25	Ileje	70
+1050	5	Centrale	36
+1051	992	Mobile GSM	112
+1052	993	Mobile GSM	112
+1053	994	Mobile GSM	112
+1054	998	Mobile GSM	112
+1055	997	Mobile RTM	112
+1056	663	Mob.GSM-900 Barash Com.Tech.	76
+1057	478	Aрдахан [Ardahan]	26
+1058	75	Mobile CELTEL	106
+1059	77	Mobile MNT	106
+1060	78	Mobile MNT	106
+1061	71	Mobile UTLTELCEL	106
+1062	766	Mobole STARCOM	106
+1063	767	Mobole STARCOM	106
+1064	768	Mobole STARCOM	106
+1065	91105	Mob. Бузтел	75
+1066	91106	Mob. Бузтел	75
+1067	71120	Mob. Бузтон	75
+1068	93180	Mob. Коском	75
+1069	93181	Mob. Коском	75
+1070	66183	Mob. Коском	75
+1071	66236	Mob. Коском	75
+1072	93183	Mob. Коском	75
+1073	93182	Mob. Коском	75
+1074	93184	Mob. Коском	75
+1075	98126	Mob. Рубикон	75
+1076	98109	Mob. Рубикон	75
+1077	98127	Mob. Рубикон	75
+1078	98128	Mob. Рубикон	75
+1079	61221	Mob. Уздунробита	75
+1080	67224	Mob. Уздунробита	75
+1081	66238	Mob. Уздунробита	75
+1082	722279	Mob. Уздунробита	75
+1083	717169	Mob. Уздунробита	75
+1084	97130	Mob. Уздунробита	75
+1085	97131	Mob. Уздунробита	75
+1086	97230	Mob. Уздунробита	75
+1087	97231	Mob. Уздунробита	75
+1088	75222	Mob. Уздунробита	75
+1089	71616	Mob. Уздунробита	75
+1090	762229	Mob. Уздунробита	75
+1091	73557	Mob. Уздунробита	75
+1092	716692	Mob. Уздунробита	75
+1093	62221	Mob. Уздунробита	75
+1094	792225	Mob. Уздунробита	75
+1095	74229	Mob. Уздунробита	75
+1096	73221	Mob. Уздунробита	75
+1097	692212	Mob. Уздунробита	75
+1098	692213	Mob. Уздунробита	75
+1099	65227	Mob. Уздунробита	75
+1100	71604	Mob. Уздунробита	75
+1101	97107	Mob. Уздунробита	75
+1102	97110	Mob. Уздунробита	75
+1103	97111	Mob. Уздунробита	75
+1104	92100	Mob. Узмаком	75
+1105	92101	Mob. Узмаком	75
+1106	92104	Mob. Узмаком	75
+1107	652	Ahrarne	14
+1109	642	Артигас [Artigas]	135
+1110	92	Mobile	95
+1111	99	Mobile	95
+1112	34	Баколод [Bacolod]	149
+1113	6	Алаво-Алавус [Alavo-Alavus]	140
+1114	6	Алаярви [Alajarvi]	140
+1115	602	DCS Bouygues Telecom	42
+1116	660	DCS Bouygues Telecom	42
+1117	661	DCS Bouygues Telecom	42
+1118	662	DCS Bouygues Telecom	42
+1119	663	DCS Bouygues Telecom	42
+1120	664	DCS Bouygues Telecom	42
+1121	665	DCS Bouygues Telecom	42
+1122	666	DCS Bouygues Telecom	42
+1123	667	DCS Bouygues Telecom	42
+1124	668	DCS Bouygues Telecom	42
+1125	699	DCS Bouygues Telecom	42
+1126	689	DCS France Telecom	42
+1127	618	DCS SFR	42
+1128	987	GSM	50
+1129	988	GSM	50
+1130	51	Андриевица	215
+1131	602	GSM-Mobile Network	66
+1132	603	GSM-Mobile Network	66
+1133	604	GSM-Mobile Network	66
+1134	605	GSM-Mobile Network	66
+1135	606	GSM-Mobile Network	66
+1136	607	GSM-Mobile Network	66
+1137	608	GSM-Mobile Network	66
+1138	72	GSM-Mobile Network	66
+1139	941	Entel Movil	43
+1140	981	Entel Movil	43
+1141	982	Entel Movil	43
+1142	983	Entel Movil	43
+1143	951	Entel PCS	43
+1144	9607	Entel PCS	43
+1145	987	Entel PCS	43
+1146	988	Entel PCS	43
+1147	989	Entel PCS	43
+1148	76	Mobile GSM/UMTS	116
+1149	77	Mobile GSM/UMTS	116
+1150	78	Mobile GSM/UMTS	116
+1151	79	Mobile GSM/UMTS	116
+1152	322	Алингсос [Alingsas]	141
+1153	174	Алунда [Alunda]	141
+1154	472	Альвеста [Alvesta]	141
+1155	960	Арвидсьяур [Arvidsjaur]	141
+1156	570	Арвика [Arvika]	141
+1157	583	Аскерсунд [Askersund]	141
+1158	73	Air Lanka	16
+1159	3	Амбато [Ambato]	143
+1160	7	Асогес [Azogues]	143
+1161	5	Getesa GSM	44
+1162	1	Все города. [All city.]	189
+1163	33	Johvi	72
+1164	7	Abebo	6
+1165	4	Abi Adi	6
+1166	2	Abomsa	6
+1167	8	Addis-Zemen	6
+1168	8	Adet	6
+1169	4	Adigrat	6
+1170	4	Adwa	6
+1171	3	Akesta	6
+1172	6	Alaba-Kulito	6
+1173	6	Alem-Tena	6
+1174	6	Aleta-Wondo	6
+1175	8	Amanuel	6
+1176	8	Amba Samael	6
+1177	7	Arejo	6
+1178	2	Areti	6
+1179	6	Arresi-Negele	6
+1180	2	Assasa	6
+1181	5	Assebe-Teferi	6
+1182	5	Assebot	6
+1183	2	Assela	6
+1184	7	Assendabo	6
+1185	7	Assossa	6
+1186	7	Atnago	6
+1187	6	Awassa	6
+1188	5	Awedaye	6
+1189	58	Аберфелди [Aberfeldy]	129
+1190	46	Аделейд [Adelaide]	129
+1191	256	Александер-Бей [Alexander Bay]	129
+1192	551	Аливал-Норт [Aliwal North]	129
+1193	41	Ahsan	15
+1194	210	Mobile CWJ	107
+1195	700	Mobile CWJ	107
+1196	707	Mobile CWJ	107
+1197	77	Mobile CWJ	107
+1198	781	Mobile CWJ	107
+1199	782	Mobile CWJ	107
+1200	783	Mobile CWJ	107
+1201	784	Mobile CWJ	107
+1202	787	Mobile CWJ	107
+1203	788	Mobile CWJ	107
+1204	789	Mobile CWJ	107
+1205	790	Mobile CWJ	107
+1206	791	Mobile CWJ	107
+1207	792	Mobile CWJ	107
+1208	793	Mobile CWJ	107
+1209	796	Mobile CWJ	107
+1210	797	Mobile CWJ	107
+1211	798	Mobile CWJ	107
+1212	799	Mobile CWJ	107
+1213	806	Mobile CWJ	107
+1214	807	Mobile CWJ	107
+1215	808	Mobile CWJ	107
+1216	809	Mobile CWJ	107
+1217	812	Mobile CWJ	107
+1218	813	Mobile CWJ	107
+1219	814	Mobile CWJ	107
+1220	815	Mobile CWJ	107
+1221	816	Mobile CWJ	107
+1222	817	Mobile CWJ	107
+1223	818	Mobile CWJ	107
+1224	819	Mobile CWJ	107
+1225	82	Mobile CWJ	107
+1226	83	Mobile CWJ	107
+1227	909	Mobile CWJ	107
+1228	919	Mobile CWJ	107
+1229	990	Mobile CWJ	107
+1230	995	Mobile CWJ	107
+1231	997	Mobile CWJ	107
+1232	999	Mobile CWJ	107
+1233	301	Mobile Centennial	107
+1234	302	Mobile Centennial	107
+1235	303	Mobile Centennial	107
+1236	304	Mobile Centennial	107
+1237	36	Mobile Digicel	107
+1238	37	Mobile Digicel	107
+1239	38	Mobile Digicel	107
+1240	420	Mobile Digicel	107
+1241	421	Mobile Digicel	107
+1242	422	Mobile Digicel	107
+1243	423	Mobile Digicel	107
+1244	424	Mobile Digicel	107
+1245	78	Акаси [Akashi]	138
+1246	188	Акита [Akita]	138
+1247	177	Аомори [Aomori]	138
+1248	166	Асахикава [Asahikawa]	138
+1249	284	Асикага [Ashikaga]	138
+1250	82	Korea	48
+1251	627	Kucova	48
+1252	552	Labrazhdi	48
+1253	536	Lac	48
+1254	37	Guelma	39
+1255	61	Mobile GSM	39
+1256	61	Mobile NMT	39
+1257	49	Naama	39
+1258	32	Oum El Bouaghi	39
+1259	37	Souk Ahras	39
+1260	24	Tipaza	39
+1261	46	Tissemsilt	39
+1262	91	Mobile GSM 900-Unitel	47
+1263	92	Mobile GSM 900-Unitel	47
+1264	772	Mobile VSAT-DAMA	47
+1265	773	Mobile VSAT-DAMA	47
+1266	2	Petrangol	47
+1267	32	Zaire	47
+1268	3755	2 Мая [2 de Mayo]	1
+1269	3435	20 Сентября [20 de Setiembre]	1
+1270	2345	25 Мая [25 de Mayo]	1
+1271	3755	25 Мая [25 de Mayo]	1
+1272	2627	25 мая [25 de mayo]	1
+1273	2902	28 Ноября [28 de Noviembre]	1
+1274	2392	30 Августа [30 de Agosto]	1
+1275	264	9 Июля [9 de Julio]	1
+1276	2317	9 Июля [9 de Julio]	1
+1277	3751	9 Июля [9 de Julio]	1
+1278	3469	Acebal	1
+1279	2477	Acevedo	1
+1280	2331	Adolfo van Praet	1
+1281	261	Agrelo	1
+1282	2941	Aguada Guzman	1
+1283	3875	Aguaray	1
+1284	3755	Alba Posse	1
+1285	3438	Alcaraz	1
+1286	3465	Alcorta	1
+1287	381	Alderetes	1
+1288	3533	Alicia	1
+1289	3833	Alijilan	1
+1290	358	Alpa Corral	1
+1291	3562	Altos de Chipion	1
+1292	3402	Alvares	1
+1293	3892	Amaicha	1
+1294	3491	Ambrosetti	1
+1295	2954	Anguil	1
+1296	3547	Anizacate	1
+1297	3436	Aranguren	1
+1298	2927	Argerich	1
+1299	3468	Arias	1
+1300	3755	Aristobulo del Valle	1
+1301	3466	Arocena	1
+1302	2353	Arribenos	1
+1303	342	Arroyo Aguiar	1
+1304	353	Arroyo Algodon	1
+1305	3482	Arroyo Ceibal	1
+1306	2477	Arroyo Dulce	1
+1307	3491	Arrufo	1
+1308	2658	Bagual	1
+1309	3546	Bahia Agradable	1
+1310	2362	Baigorrita	1
+1311	2921	Balneario Pehuen Co	1
+1312	3388	Banderalo	1
+1313	2226	Barrio san Esteban	1
+1314	221	Bartolome Bavio	1
+1315	3492	Bauer y Sigel	1
+1316	2355	Bayauca	1
+1317	2395	Bellocq	1
+1318	385	Beltran	1
+1319	3327	Benavidez	1
+1320	353	Bengolea	1
+1321	3463	Benjamin Gould	1
+1322	3446	Benjamin Lambert	1
+1323	3465	Berabevu	1
+1324	358	Berrotaran	1
+1325	2392	Berutti	1
+1326	3541	Bialet Masse	1
+1327	3464	Bigand	1
+1328	2929	Bonifacio	1
+1329	3471	Bouquet	1
+1330	351	Bouwer	1
+1331	2625	Bowen	1
+1332	3471	Bustinza	1
+1333	3781	Caa Cati	1
+1334	3405	Cacique Ariacaiquin	1
+1335	2948	Caepe Malal	1
+1336	3468	Cafferata	1
+1337	3886	Caimancito	1
+1338	2948	Cajon de Curileuvu	1
+1339	345	Calabacillas	1
+1340	2335	Caleufu	1
+1341	3468	Camilo Aldao	1
+1342	3875	Campamento Vespucio	1
+1343	2623	Campamentos	1
+1344	3755	Campo Viera	1
+1345	343	Camps	1
+1346	3525	Canada de Luque	1
+1347	3465	Canada del Ucle	1
+1348	3574	Capilla de los Remedios	1
+1349	3743	Capiovi	1
+1350	2475	Carabelas	1
+1351	2267	Carilo	1
+1352	2227	Carlos Beguerie	1
+1353	2323	Carlos Keen	1
+1354	2274	Carlos Spegazzini	1
+1355	358	Carnerillo	1
+1356	2945	Carrenleufu	1
+1357	2338	Carro Quemado	1
+1358	299	Catriel	1
+1359	3468	Cavanagh	1
+1360	2948	Caviahue	1
+1361	3496	Cavour	1
+1362	299	Centenario	1
+1363	2316	Daireaux	1
+1364	2331	Damian Maisonave	1
+1365	381	Delfin Gallo	1
+1366	2317	Dennehy	1
+1367	2322	Derqui	1
+1368	3547	Despenaderos	1
+1369	342	Desvio Arijon	1
+1370	2965	Dique Florentino Ameghino	1
+1371	264	Divisadero	1
+1372	3455	Dominguez	1
+1373	2225	Domselaar	1
+1374	2302	Dorila	1
+1375	2923	Dufaur	1
+1376	2326	Duggan	1
+1377	3492	Egusquiza	1
+1378	358	El Chacay	1
+1379	2962	El Chalten	1
+1380	2948	El Cholar	1
+1381	3454	El Cimarron	1
+1382	2965	El Escorial	1
+1383	2944	El Hoyo	1
+1384	2948	El Huecu	1
+1385	3826	El Portezuelo	1
+1386	3576	El Tio	1
+1387	2652	El Trapiche	1
+1388	2355	El Triunfo	1
+1389	358	Elena	1
+1390	3498	Elisa	1
+1391	3462	Elortondo	1
+1392	2335	Embajador Martini	1
+1393	2936	Erize	1
+1394	2923	Espartillar	1
+1395	3435	Est.Gobernador Febre	1
+1396	264	Estacion Albardon	1
+1397	264	Estacion Angaro Norte	1
+1398	223	Estacion Camet	1
+1399	3492	Estacion Clucellas	1
+1400	3445	Estacion Echague	1
+1401	2223	Estacion Gomez	1
+1402	3525	Estacion Sarmiento	1
+1403	2478	Estacion Vina	1
+1404	3716	Estanislao del Campo	1
+1405	2924	Esteban Agustin Gascon	1
+1406	3491	Esteban Rams	1
+1407	3773	Felipe Yofre	1
+1408	3402	Fighiera	1
+1409	3886	Fraile Pintado	1
+1410	342	Franck	1
+1411	3731	Gancedo	1
+1412	3743	Garuhape	1
+1413	3468	General B.Ohiggins	1
+1414	358	General Deheza	1
+1415	3571	General Fotheringham	1
+1416	2477	General Gelly	1
+1417	3717	General Lucio V.Mansilla	1
+1418	2267	General Madariaga	1
+1419	343	General Racedo	1
+1420	3461	General Rojo	1
+1421	3461	General Savio	1
+1422	3583	General Soler	1
+1423	2356	Germania	1
+1424	3404	Gessler	1
+1425	2224	Glew	1
+1426	2627	Goudge	1
+1427	2923	Goyena	1
+1428	2320	Grand Bourg	1
+1429	3491	Gregoria Perez de Denis	1
+1430	3496	Grutly Sur	1
+1431	3482	Guadalupe Norte	1
+1432	2924	Guatrache	1
+1433	387	Guemes	1
+1434	351	Guinazu	1
+1435	351	Hale	1
+1436	3735	Hermoso Campo	1
+1437	3717	Herradura	1
+1438	2928	Hilario Ascasubi	1
+1439	2284	Hinojo	1
+1440	2473	Hughes	1
+1441	2948	Huinganco	1
+1442	345	Humaita	1
+1443	3493	Humberto Primo	1
+1444	3496	Humboldt	1
+1445	341	Ibarlucea	1
+1446	3534	Idiazabal	1
+1447	3717	Incone	1
+1448	2983	Indio Rico	1
+1449	3482	Ingeniero Chanourdie	1
+1450	2941	Ingeniero Huergo	1
+1451	3488	Ingeniero Maschwitz	1
+1452	3455	Ingeniero Miguel Sajaroff	1
+1453	2352	Irala	1
+1454	3446	Irazusta	1
+1455	3329	Ireneo Portela	1
+1456	2354	Iriarte	1
+1457	3466	Irigoyen	1
+1458	3781	Ita-Ibate	1
+1459	353	James Craik	1
+1460	2223	Jeppener	1
+1461	3547	Jose de la Quintana	1
+1462	3492	Josefina	1
+1463	2928	Juan A.Pradere	1
+1464	2657	Juan Jorba	1
+1465	3455	Jubileo	1
+1466	3534	Justiniano Posse	1
+1467	3382	La Cesira	1
+1468	3462	La Chispa	1
+1469	3735	La Clotilde	1
+1470	2622	La Consulta	1
+1471	3546	La Cumbrecita	1
+1472	2264	La Dulce	1
+1473	3564	La Francia	1
+1474	3525	La Granja	1
+1475	3542	La Higuera	1
+1476	2322	La Lonja	1
+1477	3547	La Paisanita	1
+1478	3562	La Paquita	1
+1479	3497	La Pelada	1
+1480	3498	La Penca y Caraguata	1
+1481	353	La Playosa	1
+1482	3575	La Quinta	1
+1483	381	La Reduccion	1
+1484	3460	La Vanguardia	1
+1485	3465	Labordeboy	1
+1486	3718	Laguna Naick Neck	1
+1487	3404	Larrechea	1
+1488	3446	Larroque	1
+1489	358	Las Acequias	1
+1490	358	Las Albahacas	1
+1491	381	Las Bolsas	1
+1492	264	Las Casuarinas	1
+1493	2901	Las Cotorras	1
+1494	3725	Las Garcitas	1
+1495	358	Las Higueras	1
+1496	2627	Las Malvinas	1
+1497	3462	Maggiolo	1
+1498	342	Manucho	1
+1499	2291	Mar del Sur	1
+1500	2355	Martinez de Hoz	1
+1501	3563	Marull	1
+1502	342	Matilde	1
+1503	2395	Mauricio Hirsch	1
+1504	2333	Mauricio Mayer	1
+1505	2266	Mechonngue	1
+1506	2333	Miguel Cane	1
+1507	2953	Miguel Riglos	1
+1508	387	Mina Tincalayu	1
+1509	385	Mishki Mayu	1
+1510	2395	Moctezuma	1
+1511	3455	Mojones Sur	1
+1512	3466	Monje	1
+1513	3467	Monte Buey	1
+1514	2921	Monte Hermoso	1
+1515	3468	Monte Maiz	1
+1516	3491	Montefiore	1
+1517	3471	Montes de Oca	1
+1518	2346	Moquehua	1
+1519	3482	Moussy	1
+1520	3462	Murphy	1
+1521	3498	Nare	1
+1522	3583	Nicolas Bruzone	1
+1523	2647	Niquivil	1
+1524	2944	Norquinco	1
+1525	2342	O" Brien	1
+1526	358	Olaeta	1
+1527	2323	Open Door	1
+1528	3436	Pajonal	1
+1529	3446	Palavecino	1
+1530	3446	Parque Industrial	1
+1531	2942	Paso Aguerre	1
+1532	3887	Paso de Jama	1
+1533	3783	Paso de la Patria	1
+1534	3400	Pavon	1
+1535	3469	Pavon Arriba	1
+1536	2343	Pedernales	1
+1537	3483	Pedro Gomez Cello	1
+1538	3574	Pedro e Vivas	1
+1539	3446	Pehuajo Sur	1
+1540	3446	Perdices	1
+1541	3329	Perez Millan	1
+1542	3460	Peyrano	1
+1543	2335	Pichi Huinca	1
+1544	2242	Pila	1
+1545	2336	Pincen	1
+1546	2477	Pinzon	1
+1547	3455	Piqeyro	1
+1548	3574	Piquillin	1
+1549	2965	Playa Union	1
+1550	299	Plottier	1
+1551	264	Pocito	1
+1552	2344	Polvaredas	1
+1553	3564	Portena	1
+1554	3547	Potrero de Garay	1
+1555	2652	Potrero de los Funes	1
+1556	3491	Pozo Borrado	1
+1557	3497	Progreso	1
+1558	2394	Quenuma	1
+1559	3498	Ramayon	1
+1560	2346	Ramon Biaus	1
+1561	2625	Real del Padre	1
+1562	388	Reyes	1
+1563	3718	Riacho He-He	1
+1564	299	Rincon de los Sauces	1
+1565	3543	Rio Ceballos	1
+1566	3858	Rio Hondo	1
+1567	3876	Rio Piedras	1
+1568	358	Rio de los Sauces	1
+1569	261	Rodeo del Medio	1
+1570	2623	Rodriguez Pena	1
+1571	2337	Roosevelt	1
+1572	2227	Roque Perez	1
+1573	3385	Rosalez	1
+1574	3400	Rueda	1
+1575	3743	Ruiz de Montoya	1
+1576	3492	Saguier	1
+1577	2652	Salinas del Bebedero	1
+1578	3543	Salsipuedes	1
+1579	2325	San Andres de Giles	1
+1580	3541	San Antonuo de Arredondo	1
+1581	3404	San Carlos Centro	1
+1582	3442	San Cipriano	1
+1583	3466	San Fabian	1
+1584	2982	San Francisco ge Belloco	1
+1585	3717	San Francosco de Laishi	1
+1586	3404	San Jeronimo Norte	1
+1587	341	San Jeronimo Sur	1
+1588	3404	San Jeronimo del Sauce	1
+1589	2286	San Jorge	1
+1590	2924	San Miguel Arcangel	1
+1591	353	Sanabria	1
+1592	3492	Santa Clara de Saguier	1
+1593	3752	Santa Pipo	1
+1594	3546	Santa Rosa de Calamuchita	1
+1595	3885	Santa Victoria	1
+1596	3875	Santa Victoria Este	1
+1597	3460	Sargento Cabral	1
+1598	3533	Saturnino M.Laspiur	1
+1599	3715	Sauzalito	1
+1600	343	Segui	1
+1601	2284	Sierras Bayas	1
+1602	353	Silvio Pellico	1
+1603	2395	Smith	1
+1604	2302	Speluzzi	1
+1605	3571	Tancacha	1
+1606	2948	Taquimilan Abajo	1
+1607	343	Tezanos Pinto	1
+1608	3400	Theobald	1
+1609	353	Ticino	1
+1610	2656	Tilisarao	1
+1611	353	Tio Pujio	1
+1612	2320	Tortuguitas	1
+1613	2302	Trenel	1
+1614	2948	Tricao Malal	1
+1615	2226	Uribelarrea	1
+1616	2965	Veintiocho de Julio	1
+1617	3498	Vera Y Pintado	1
+1618	2202	Verrey del Pino	1
+1619	343	Viale	1
+1620	2221	Vieytes	1
+1621	3471	Villa Eloisa	1
+1622	3546	Villa General Belgrano	1
+1623	3716	Villa General Guemes	1
+1624	2255	Villa Gesell	1
+1625	3548	Villa Giardino	1
+1626	2336	Villa Huidobro	1
+1627	3464	Villa Mugueta	1
+1628	381	Villa Nougues	1
+1629	3546	Villa Parque los Reartes	1
+1630	2323	Villa Ruiz	1
+1631	3382	Villa Saboya	1
+1632	3547	Villa San Isidro	1
+1633	3445	Villa San Marcial	1
+1634	343	Villa Tabossi	1
+1635	3546	Villa Yacanto	1
+1636	3546	Villa del Dique	1
+1637	3717	Villa dos Trece	1
+1638	2944	Villa la Angostura	1
+1639	3547	Villa la Marced	1
+1640	220	Villars	1
+1641	3468	Wenceslao Escalante	1
+1642	2473	Wheelwright	1
+1643	345	Yerua	1
+1644	345	Yuqueri	1
+1645	3492	Aurelia Sur	1
+1646	385	Autonomia	1
+1647	3758	Azara	1
+1648	2325	Azcuenaga	1
+1649	3401	Centeno	1
+1650	381	Cevil Pozo	1
+1651	2965	Chacay Oeste	1
+1652	261	Chacras de Coria	1
+1653	3575	Chalacea	1
+1654	3468	Chanar Ladeado	1
+1655	223	Chapadmalal	1
+1656	2623	Chapanay	1
+1657	2948	Chapua	1
+1658	3462	Chapuy	1
+1659	3826	Chaqar	1
+1660	3773	Chavarria	1
+1661	2941	Chichinales	1
+1662	2396	Chiclana	1
+1663	3534	Chilibroste	1
+1664	3854	Choya	1
+1665	3462	Christophersen	1
+1666	358	Chucul	1
+1667	3522	Chuna Husi	1
+1668	2948	Churriaca	1
+1669	3542	Cienaga del Coro	1
+1670	3476	Clarrke	1
+1671	342	Colastine	1
+1672	3438	Colonia Avigdor	1
+1673	345	Colonia Ayui	1
+1674	3404	Colonia Belgrano	1
+1675	3722	Colonia Benitez	1
+1676	3564	Colonia Castelar	1
+1677	3492	Colonia Cello	1
+1678	3576	Colonia Cuatro Esquuinas	1
+1679	3442	Colonia Elia	1
+1680	343	Colonia Ensayo	1
+1681	3722	Colonia Popular	1
+1682	3564	Colonia Prosperidad	1
+1683	3496	Colonia Pujol	1
+1684	351	Colonia Tirolesa	1
+1685	3574	Comechingonos	1
+1686	2940	Comico	1
+1687	2342	Comodoro Py	1
+1688	3461	Conesa	1
+1689	2334	Conhello	1
+1690	3544	Conlara	1
+1691	3454	Conscripto Bernardi	1
+1692	299	Contralmirante Cordero	1
+1693	2983	Copetonas	1
+1694	358	Coronel Baigorria	1
+1695	2946	Coronel Belisle	1
+1696	3388	Coronel Charlone	1
+1697	2331	Coronel Hilario Lagos	1
+1698	3735	Coronel du Graty	1
+1699	3752	Corpus	1
+1700	3471	Correa	1
+1701	3572	Costa Sacate	1
+1702	2623	Costa de Araujo	1
+1703	3435	Crucesitas Tercera	1
+1704	3497	Cululu	1
+1705	2945	Cushamen	1
+1706	353	Etruria	1
+1707	2272	Las Marianas	1
+1708	353	Las Perdices	1
+1709	3833	Las Pirquitas	1
+1710	358	Las Vertientes	1
+1711	223	Las dos Marias	1
+1712	3492	Lehmann	1
+1713	2242	Lezama	1
+1714	351	Liceo	1
+1715	3447	Liebig	1
+1716	3497	Llambi Campbell	1
+1717	3327	Lopez Camelo	1
+1718	351	Los Boulevares	1
+1719	3576	Los Chanaritos	1
+1720	345	Los Charruas	1
+1721	2945	Los Cipreses	1
+1722	3584	Los Cisnes	1
+1723	3544	Los Hornillos	1
+1724	3482	Los Laureles	1
+1725	2627	Los Molles	1
+1726	3465	Los Quirquinchos	1
+1727	353	Los Zorros	1
+1728	3572	Lozada	1
+1729	3476	Lucio Vicente Lopez	1
+1730	3521	Lucio Victor Mansilla	1
+1731	3476	Luis Palacios	1
+1732	2651	Lujan	1
+1733	3573	Luque	1
+1734	3546	Lutti	1
+1735	3442	Pronunciamiento	1
+1736	3497	Providencia	1
+1737	3446	Pueblo Belgrano	1
+1738	343	Pueblo Brugo	1
+1739	3402	Pueblo Esther	1
+1740	3755	Pueblo Guarani	1
+1741	3446	Pueblo Ibicuy	1
+1742	2345	Pueblo del Valle	1
+1743	3835	Puerta del Corral Quemado	1
+1744	3722	Puerto Bastiani	1
+1745	3476	Puerto Gaboto	1
+1746	299	Puerto Manzano	1
+1747	3444	Puerto Ruiz	1
+1748	3464	Pujato	1
+1749	2221	Punta Indio	1
+\.
+
+
+--
+-- TOC entry 1797 (class 0 OID 295076)
+-- Dependencies: 1504
+-- Data for Name: contact; Type: TABLE DATA; Schema: public; Owner: asd
+--
+
+COPY contact (id, name, surname) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1798 (class 0 OID 295082)
+-- Dependencies: 1505
+-- Data for Name: contact_phones; Type: TABLE DATA; Schema: public; Owner: asd
+--
+
+COPY contact_phones (contact_id, phones) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1799 (class 0 OID 295088)
+-- Dependencies: 1506
+-- Data for Name: country; Type: TABLE DATA; Schema: public; Owner: asd
+--
+
+COPY country (id, code, name) FROM stdin;
+133	61	Австралия
+130	43	Австрия
+115	994	Азербайджан
+48	355	Албания
+39	213	Алжир
+171	1264	Ангилья
+47	244	Ангола
+192	376	Андорра
+84	1268	Антигуа и Барбуда
+119	599	Антильские острова
+114	853	Аомынь (Макао)
+1	54	Аргентина
+118	297	Аруба
+169	1242	Багамские острова
+153	880	Бангладеш
+170	1246	Барбадос
+51	973	Бахрейн
+113	375	Беларусь
+30	501	Белиз
+37	32	Бельгия
+209	229	Бенин
+173	1441	Бермудские острова
+28	95	Бирма (Мьянма)
+137	359	Болгария
+155	591	Боливия
+34	387	Босния и Герцеговина
+188	267	Ботсвана
+125	55	Бразилия
+152	673	Бруней
+49	226	Буркина-Фасо
+32	257	Бурунди
+123	975	Бутан
+200	678	Вануату
+5	44	Великобритания
+41	36	Венгрия
+20	58	Венесуэла
+157	1340	Виргинские острова (Американские)
+156	1284	Виргинские острова (Британские)
+19	84	Вьетнам
+98	241	Габон
+162	1808	Гавайские острова
+79	509	Гаити
+11	592	Гайана
+9	220	Гамбия
+139	233	Гана
+53	590	Гваделупа
+142	502	Гватемала
+54	594	Гвиана Французская
+208	224	Гвинея
+57	245	Гвинея-Бисау
+124	49	Германия
+191	350	Гибралтар
+117	852	Гонгконг
+195	504	Гондурас
+174	1473	Гренада
+80	299	Гренландия
+109	30	Греция
+111	995	Грузия
+159	1671	Гуам
+82	45	Дания
+101	243	Демократическая Республика Конго (Заир)
+165	253	Джибути
+160	1767	Доминика
+108	1809	Доминиканская Республика
+2	20	Египет
+207	260	Замбия
+87	263	Зимбабве
+74	972	Израиль
+29	91	Индия
+145	62	Индонезия
+56	962	Иордания
+132	964	Ирак
+18	98	Иран
+21	353	Ирландия
+88	354	Исландия
+40	34	Испания
+110	39	Италия
+17	967	Йемен
+213	850	КНДР (Северная Корея)
+77	238	Кабо Верде
+65	7	Казахстан
+172	1345	Каймановы острова
+212	855	Камбоджа
+85	237	Камерун
+136	1	Канада
+211	3428	Канарские острова
+52	974	Катар
+148	254	Кения
+89	357	Кипр
+202	686	Кирибати
+13	86	Китай
+7	57	Колумбия
+164	242	Конго
+166	3395	Корсика
+167	506	Коста-Рика
+163	225	Кот-д"Ивуар
+35	53	Куба
+78	965	Кувейт
+25	996	Кыргызстан
+206	856	Лаос
+73	371	Латвия
+187	266	Лесото
+182	231	Либерия
+154	961	Ливан
+134	218	Ливия
+104	370	Литва
+71	423	Лихтенштейн
+63	352	Люксембург
+105	230	Маврикий
+102	222	Мавритания
+144	261	Мадагаскар
+90	389	Македония
+83	265	Малави
+92	60	Малайзия
+150	223	Мали
+96	960	Мальдивские острова
+46	356	Мальта
+121	212	Марокко
+55	596	Мартиника
+127	52	Мексика
+38	258	Мозамбик
+120	373	Молдова
+193	377	Монако
+99	976	Монголия
+175	1664	Монтсеррат
+8	264	Намибия
+23	977	Непал
+181	227	Нигер
+128	234	Нигерия
+3	31	Нидерланды
+45	505	Никарагуа
+93	64	Новая Зеландия
+59	687	Новая Каледония
+61	47	Норвегия
+198	672	Норфолк остров
+68	971	ОАЭ (Объединенные Арабские Эмираты)
+205	968	Оман
+4	92	Пакистан
+196	507	Панама
+199	675	Папуа-Новая Гвинея
+10	595	Парагвай
+103	51	Перу
+31	48	Польша
+67	351	Португалия
+178	1787	Пуэрто-Рико
+62	262	Реюньон
+126	7	Россия
+186	250	Руанда
+22	40	Румыния
+12	1	США (Соединенные Штаты Америки)
+91	503	Сальвадор
+201	685	Самоа (Западное Самоа)
+194	378	Сан-Марино
+185	239	Сан-Томе и Принсипи
+131	966	Саудовская Аравия
+58	268	Свазиленд
+176	1670	Северные Марианские острова
+86	248	Сейшельские острова
+81	221	Сенегал
+161	1784	Сент-Винсент и Гренадины
+180	1869	Сент-Китс и Невис
+177	1758	Сент-Люсия
+64	381	Сербия
+94	65	Сингапур
+97	963	Сирия
+69	421	Словакия
+60	386	Словения
+33	252	Сомали
+147	249	Судан
+197	597	Суринам
+214	232	Сьерра-Леоне
+27	992	Таджикистан
+151	66	Таиланд
+100	886	Тайвань
+70	255	Танзания
+158	1649	Теркс и Кайкос острова
+36	228	Того
+204	690	Токелау
+168	676	Тонга
+179	1868	Тринидад и Тобаго
+112	216	Тунис
+76	993	Туркменистан
+26	90	Турция
+106	256	Уганда
+75	998	Узбекистан
+14	380	Украина
+135	598	Уругвай
+190	298	Фарерские острова
+95	679	Фиджи
+149	63	Филиппины
+140	358	Финляндия
+42	33	Франция
+203	689	Французская Полинезия
+50	385	Хорватия
+184	236	ЦАР (Центрально-Африканская Республика)
+183	235	Чад
+215	382	Черногория
+66	420	Чехия
+43	56	Чили
+116	41	Швейцария
+141	46	Швеция
+16	94	Шри-Ланка
+143	593	Эквадор
+44	240	Экваториальная Гвинея
+189	291	Эритрея
+72	372	Эстония
+6	251	Эфиопия
+129	27	ЮАР
+15	82	Южная Корея
+107	1876	Ямайка
+138	81	Япония
+\.
+
+
+--
+-- TOC entry 1787 (class 2606 OID 295095)
+-- Dependencies: 1502 1502
+-- Name: city_pkey; Type: CONSTRAINT; Schema: public; Owner: asd; Tablespace: 
+--
+
+ALTER TABLE ONLY city
+    ADD CONSTRAINT city_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1789 (class 2606 OID 295097)
+-- Dependencies: 1504 1504
+-- Name: contact_pkey; Type: CONSTRAINT; Schema: public; Owner: asd; Tablespace: 
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT contact_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1791 (class 2606 OID 295099)
+-- Dependencies: 1506 1506
+-- Name: country_name_key; Type: CONSTRAINT; Schema: public; Owner: asd; Tablespace: 
+--
+
+ALTER TABLE ONLY country
+    ADD CONSTRAINT country_name_key UNIQUE (name);
+
+
+--
+-- TOC entry 1793 (class 2606 OID 295101)
+-- Dependencies: 1506 1506
+-- Name: country_pkey; Type: CONSTRAINT; Schema: public; Owner: asd; Tablespace: 
+--
+
+ALTER TABLE ONLY country
+    ADD CONSTRAINT country_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1794 (class 2606 OID 295102)
+-- Dependencies: 1502 1792 1506
+-- Name: fk200d8b86969275; Type: FK CONSTRAINT; Schema: public; Owner: asd
+--
+
+ALTER TABLE ONLY city
+    ADD CONSTRAINT fk200d8b86969275 FOREIGN KEY (country) REFERENCES country(id);
+
+
+--
+-- TOC entry 1795 (class 2606 OID 295107)
+-- Dependencies: 1505 1788 1504
+-- Name: fkaca131e455756103; Type: FK CONSTRAINT; Schema: public; Owner: asd
+--
+
+ALTER TABLE ONLY contact_phones
+    ADD CONSTRAINT fkaca131e455756103 FOREIGN KEY (contact_id) REFERENCES contact(id);
+
+
+--
+-- TOC entry 1804 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2012-08-04 18:49:34
+
+--
+-- PostgreSQL database dump complete
+--
+

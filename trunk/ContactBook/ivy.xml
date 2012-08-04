@@ -1,0 +1,44 @@
+<ivy-module version="1.0" xmlns:m="http://ant.apache.org/ivy/maven">
+  <info organisation="kz.greetgo" module="wac" />
+  <dependencies>
+
+
+    <dependency org="com.google.gwt" name="gwt-user" rev="2.4.0" conf="default" />
+    <dependency org="com.google.gwt" name="gwt-dev" rev="2.4.0" conf="default" />
+    <dependency org="com.google.gwt" name="gwt-servlet" rev="2.4.0" conf="default" />
+
+
+    <dependency org="postgresql" name="postgresql" rev="8.4-702.jdbc4" conf="default" />
+    <dependency org="com.mchange" name="c3p0" rev="0.9.2-pre4" conf="default" />
+
+    <dependency org="org.springframework" name="spring-core" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-beans" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-orm" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-web" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-context" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-tx" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-aspects" rev="3.1.2.RELEASE"  conf="default" />
+    <dependency org="org.springframework.ws" name="spring-oxm" rev="1.5.10" conf="default" />
+	<dependency org="org.springframework" name="spring-webmvc-portlet" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-instrument" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-jms" rev="3.1.2.RELEASE" conf="default" />
+    <dependency org="org.springframework" name="spring-instrument-tomcat" rev="3.1.2.RELEASE" conf="default" />
+            
+    <dependency org="org.springframework" name="spring-webmvc-struts" rev="2.5.6.SEC03" conf="default" />
+    <dependency org="org.hibernate" name="hibernate-core" rev="3.6.0.Final" conf="default" />
+    <!-- dependency org="org.hibernate" name="hibernate-annotations" rev="3.5.6-Final" conf="default" / -->
+      <dependency org="org.hibernate" name="hibernate-validator" rev="4.2.0.Final"  conf="default" />
+            
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.6.4" conf="default" />
+
+    <dependency org="commons-io" name="commons-io" rev="1.4" conf="default" />
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.4" conf="default"  />
+     <dependency org="commons-pool" name="commons-pool" rev="1.6" conf="default" />
+            
+    <dependency org="org.jsoup" name="jsoup" rev="1.6.3" conf="default" />
+    <dependency org="org.aspectj" name="aspectjrt" rev="1.6.0" conf="default" />
+     <dependency org="org.aspectj" name="aspectjweaver" rev="1.6.0" conf="default" />
+     <dependency org="javassist" name="javassist" rev="3.12.0.GA" conf="default" />
+    
+  </dependencies>
+</ivy-module>
