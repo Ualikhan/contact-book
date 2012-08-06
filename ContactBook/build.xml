@@ -23,9 +23,6 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 			 </fileset>
 	</path>
 	
-	<taskdef name="hibernatetool" 
-			         classname="org.hibernate.tool.ant.HibernateToolTask" 
-			         classpathref="project.classpath" />
 	
 	<target name="resolve">
 	<ivy:retrieve/>
@@ -69,7 +66,7 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 		
 		
 
-	<target name="drop-db" depends="gwt-compile">
+	<target name="drop-db" depends="compile">
 					
 					<sql driver="org.postgresql.Driver"
 					        classpathref="project.classpath"
@@ -82,7 +79,7 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 	(pg_stat_activity.procpid)
 						FROM pg_stat_activity
 						WHERE pg_stat_activity.datname = 'mytestdb';
-						   DROP DATABASE IF EXISTS mytestdb ;
+						   DROP DATABASE IF EXISTS mytestdb;
 							DROP OWNED BY asd CASCADE;					
 							DROP USER IF EXISTS asd;
 							
@@ -99,46 +96,47 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 		        autocommit="true">
 				CREATE USER asd WITH PASSWORD 'asd';
 				CREATE DATABASE mytestdb WITH OWNER asd;
+					</sql>
+			
+			<sql driver="org.postgresql.Driver"
+					        classpathref="project.classpath"
+					        url="jdbc:postgresql://localhost:5432/mytestdb"
+					        userid="asd"
+					        password="asd"
+					        autocommit="true">
+				CREATE TABLE city (
+				    id bigint NOT NULL,
+				    code character varying(255),
+				    name character varying(255) NOT NULL,
+				    country bigint NOT NULL
+				);
+
+				CREATE TABLE country (
+				    id bigint NOT NULL,
+				    code integer NOT NULL,
+				    name character varying(255) NOT NULL
+				);
+				
 				</sql>
+			<sql driver="org.postgresql.Driver"
+								        classpathref="project.classpath"
+								        url="jdbc:postgresql://localhost:5432/mytestdb"
+								        userid="asd"
+								        password="asd"
+								        autocommit="true"
+										src="import.sql"/>
 			</target>
 		
 	    <!-- Package the JAR file, Javascript, static resources 
 	    and external libraries into a WAR file -->
-		<taskdef name="hibernatetool" 
-		         classname="org.hibernate.tool.ant.HibernateToolTask" 
-		         classpathref="project.classpath" />
-
-		<property name="mypsql"
-		            location="C:\Program Files\PostgreSQL\8.4\bin\psql.exe"/>
-		
-		
-		<target name="insertData" depends="create-db">
-			<exec executable="cmd.exe">
-				<arg value="/c"/>
-			    <arg value="cd"/>
-				<arg value="C:\Program Files\PostgreSQL\8.4\bin" />  
-			    </exec>  
-			<exec executable="cmd.exe"> 
-				<arg value="/c"/>
-					<arg value="SET"/>
-				<arg value="PGPASSWORD=asd" />  
-				 </exec>
-			<exec executable="cmd.exe" dir="C:\Program Files\PostgreSQL\8.4\bin"> 
-				<env key="PGPASSWORD" value="asd" />
-				<arg line="/c psql -d mytestdb -U asd -f C:/Users/Ualihan/workspace/ContactBook/mytestdb.backup" />  
-				</exec>
-		</target>
-		
-		<target name="war" depends="compile,gwt-compile,insertData">
+	
+		<target name="war" depends="compile,create-db">
 	    	
 	        <war basedir="war" destfile="${war.name}" webxml="war/WEB-INF/web.xml">
 	            <exclude name="WEB-INF/**" />
 	            <webinf dir="war/WEB-INF/">
-	            	<include name="**/application-context.xml" />
-	            	<include name="**/database.properties" />
-	            	<include name="classes/**/*" />
-	            	<include name="**/*.jar" />
-	            	<exclude name="**/gwt-servlet-2.4.0.jar" />
+	            	<include name="**/*" />
+	                <exclude name="**/gwt-servlet-2.4.0.jar" />
 	            	<exclude name="**/gwt-dev-2.4.0.jar" />
 	            	<exclude name="**/gwt-user-2.4.0.jar" />
 	            </webinf>

@@ -34,16 +34,15 @@ public class GreetingServiceImpl implements GreetingService {
 
 	@Transactional(readOnly=true)
 	@Override
-	public int listSize() {
-		int listSize = dao.listSize();
-		
+	public long getContactListSize() {
+		long listSize = dao.listSize();
 		return listSize;
 	}
 	
 
 	@Transactional(readOnly=true)
 	@Override
-	public List<Contact> list(int pageNum) {
+	public List<Contact> getContactList(int pageNum) {
 		List<Contact> contacts = dao.list(pageNum);
 		for(Contact contact : contacts) {
 			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
@@ -53,7 +52,7 @@ public class GreetingServiceImpl implements GreetingService {
 	
 	@Transactional(readOnly=true)
 	@Override
-	public List<Contact> listByQuery(String query,int pageNum) {
+	public List<Contact> getContactListByQuery(String query,int pageNum) {
 		List<Contact> contacts = dao.listByQuery(query,pageNum);
 		for(Contact contact : contacts) {
 			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
@@ -77,8 +76,8 @@ public class GreetingServiceImpl implements GreetingService {
 
 	@Transactional(readOnly=true)
 	@Override
-	public List<Country> listCountry() {
-		List<Country> countries = dao.listCountry();
+	public List<Country> listCountry(int pageNum) {
+		List<Country> countries = dao.listCountry(pageNum);
 		for(Country country : countries) {
 			country.setCities(GWTUtil.makeGWTSafe(country.getCities()));
 		}

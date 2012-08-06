@@ -1,12 +1,18 @@
 package my.projects.contactbook.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import my.projects.contactbook.shared.model.City;
+import my.projects.contactbook.shared.model.Contact;
 import my.projects.contactbook.shared.model.Country;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -17,10 +23,20 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollListener;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 
 public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListener{
+	
+
+
+	
 		  HorizontalPanel mainPanel;
 		  InlineLabel countryLabel;
 		  InlineLabel cityLabel;
@@ -36,17 +52,20 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 		  HorizontalPanel bottomPanel;
 		  ContactDialogBox parent;
 		  Object layoutData;
+		 int maxScroll;
+		  
 		  private GreetingServiceAsync service=GWT.create(GreetingService.class);
 		  
 		  public ChoosePhoneNumberDialogBox(){
+			  maxScroll=0;
 			  this.parent=(ContactDialogBox) parent;
 			  countryLabel=new InlineLabel("Code of country");
 			  cityLabel=new InlineLabel("Code of city");
 			  numberLabel=new InlineLabel("Number");
-				  
 			  mainPanel=new HorizontalPanel();
 			  countryList=new ListBox();
-			  countryList.addChangeListener(new ChangeListener() {
+			 
+			  ((SourcesChangeEvents) countryList).addChangeListener(new ChangeListener() {
 				
 				@Override
 				@Deprecated
@@ -77,6 +96,7 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 							// TODO Auto-generated method stub
 						
 							countryCode.setValue(result.getCode());
+							
 							cityList.setEnabled(true);
 							cityList.clear();
 							cityList.addItem("Select city code");
@@ -104,7 +124,8 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 				}
 				}
 			});
-			    service.listCountry(new AsyncCallback<List<Country>>() {
+			  			  
+			    service.listCountry(0,new AsyncCallback<List<Country>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -113,15 +134,47 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 				}
 
 				@Override
-				public void onSuccess(List<Country> result) {
+				public void onSuccess(final List<Country> result) {
 					// TODO Auto-generated method stub
 					countryList.addItem("Select country code");
 					cityList.addItem("Select city code");
 					cityList.setEnabled(false);
-					for(Country c:result)
-						countryList.addItem(c.getName());			
+					for (int i = 0; i < result.size(); i++) {
+		                  countryList.addItem(result.get(i).getName());
+		                }
 				}
 			});
+			    
+			    ScrollPanel sp=new ScrollPanel(countryList);
+			    sp.addScrollListener(new ScrollListener() {
+					
+					@Override
+					public void onScroll(Widget widget, int scrollLeft, int scrollTop) {
+						// TODO Auto-generated method stub
+						System.out.println(scrollTop);
+						if(maxScroll<scrollTop)
+							 service.listCountry(scrollTop,new AsyncCallback<List<Country>>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										// TODO Auto-generated method stub
+										
+									}
+
+									@Override
+									public void onSuccess(final List<Country> result) {
+										// TODO Auto-generated method stub
+										countryList.addItem("Select country code");
+										cityList.addItem("Select city code");
+										cityList.setEnabled(false);
+										for (int i = 0; i < result.size(); i++) {
+							                  countryList.addItem(result.get(i).getName());
+							                }
+									}
+								});
+							
+					}
+				});
 			  
 			  countryCode=new IntegerBox();
 			  countryCode.setMaxLength(4);

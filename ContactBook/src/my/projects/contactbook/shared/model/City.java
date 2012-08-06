@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class City implements Serializable{
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	public Long getId() {
 		return id;
@@ -24,14 +24,14 @@ public class City implements Serializable{
 		this.id = id;
 	}
 	
-	@Column(name="NAME",nullable=false,unique=true)
+	@Column(name="NAME",nullable=false,unique=false)
 	private String name;
 	
-	@Column(name="CODE",nullable=false)
+	@Column(name="CODE",nullable=true,unique=false)
 	private String code;
 	
 	@ManyToOne
-	@JoinColumn(name="country",referencedColumnName="CODE",nullable=false)
+	@JoinColumn(name="country",referencedColumnName="ID",nullable=false)
 	private Country country;
 	
 	public void setCode(String code) {

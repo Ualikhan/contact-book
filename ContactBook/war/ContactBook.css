@@ -26,7 +26,7 @@ h1 {
   font-family: monospace;
   font-size: 20pt;
   margin-left: 10px;
-  height: 20%;
+  height: 25px;
   border-style: solid 1px;
  
 }
@@ -84,6 +84,11 @@ h1 {
 	background: transparent url("images/phone-icon-add-callOnHover.png");
 }
 
+.linkAnchor{
+margin: 10px;	
+}
+
+
 
 
 /** Most GWT widgets already have a style name defined */
@@ -91,9 +96,26 @@ h1 {
   width: 400px;
 }
 
+
 .dialogVPanel {
   margin: 5px;
 }
+
+.hp{
+	margin-left: 60px;
+}
+
+.closeButtonDialog{
+  margin: 10px;
+  margin-left:20px;
+  width: 80px;
+}
+.okButtonDialog{
+	margin:10px;
+	width: 80px;
+    margin-left: 20px;
+}
+
 .addButton{
 	border: solid 0px white;
 	text-align: center;
@@ -174,21 +196,11 @@ h1 {
 #ok{
 	margin:10px;
 	width: 80px;
-margin-left: 90px;
+    margin-left: 90px;
 }
-#closeButtonDialog{
-  margin: 10px;
-  margin-left:20px;
- width: 80px;
-}
-#okButtonDialog{
-	margin:10px;
-	width: 80px;
-margin-left: 20px;
-}
-#hp{
-	margin-left: 60px;
-}
+
+
+
 .okButton{
 	margin-top:10px;
 	margin-left: 10px;
@@ -216,6 +228,50 @@ margin-left: 20px;
 	height: 128px;
 	background: transparent url("images/previousOnHover.png");
 }
+.countryLabel{
+	font-family: inherit;
+	color: blue;
+	font-size: 16px;
+}
+.cityLabel{
+	font-family: inherit;
+	color: blue;
+	font-size: 16px;
+}
+.numberLabel{
+	font-family: inherit;
+	color: blue;
+	font-size: 16px;
+}
+.countryList{
+	font-family: serif;
+	font-size: 12px;
+	color: graytext;
+}
+.cityList{
+	font-family: serif;
+	font-size: 12px;
+	color: graytext;
+}
+.countryCode{
+	width: 30px;
+	height: 20px;
+	font-style: inherit;
+	color: red;
+}
+.cityCode{
+	width: 60px;
+	height: 20px;
+	font-style: inherit;
+	color: blue;
+}
+.numberText{
+	width: 100px;
+	height: 20px;
+	font-style: inherit;
+	color: black;
+}
+
 #root{
 	margin:5px;
 	

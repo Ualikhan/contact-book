@@ -11,8 +11,11 @@ import my.projects.contactbook.shared.model.Country;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,6 +23,8 @@ public class ContactBookDAO {
 
 	@Autowired
 	private HibernateTemplate hibernate;
+	LocalSessionFactoryBean lsfb;
+
 	
 	public Contact get(Long id) {
 		return hibernate.get(Contact.class,id);
@@ -33,20 +38,21 @@ public class ContactBookDAO {
 		return (Long) hibernate.save(entity);
 	}
 	
+	
 	public void update(Contact entity) {
 		 hibernate.update(entity);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Contact> list(int pageNum) {
+		//runSchemaGeneration();
 		String queryStr = "SELECT c FROM Contact c order by c.id";
 		System.out.println(queryStr);
 		Query query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
 		return (List<Contact>)query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public int listSize() {
+	public long listSize() {
 		String queryStr = "SELECT c FROM Contact c order by c.id";
 		System.out.println(queryStr);
 		Query query = getCurrentSession().createQuery(queryStr);
@@ -61,13 +67,13 @@ public class ContactBookDAO {
 		if(q.contains(" ")){
 			String first=q.substring(0, q.indexOf(" "));
 			String second=q.substring(q.indexOf(" ")+1);
-		String queryStr = "SELECT c FROM Contact c order by c.id  where ((c.name like '%"+first+"%') AND (c.surname like '%"+second+"%')) OR ((c.name like '%"+second+"%') AND (c.surname like '%"+first+"%'))  order by c.id";
+		String queryStr = "SELECT c FROM Contact c where ((c.name like '%"+first+"%') AND (c.surname like '%"+second+"%')) OR ((c.name like '%"+second+"%') AND (c.surname like '%"+first+"%'))  order by c.id";
 		System.out.println(queryStr);
 		query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
 		}
 		else{
 			
-			String queryStr = "SELECT c FROM Contact c order by c.id  where (c.name like '%"+q+"%') OR (c.surname like '%"+q+"%') order by c.id";
+			String queryStr = "SELECT c FROM Contact c where (c.name like '%"+q+"%') OR (c.surname like '%"+q+"%') order by c.id";
 			System.out.println(queryStr);
 			query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
 		}
@@ -94,19 +100,24 @@ public class ContactBookDAO {
 		hibernate.delete(entity);
 	}
 	
-	public Long insertCountry(Country entity) {
-		return (Long) hibernate.save(entity);
+	public void insertCountry(Country entity) {
+		hibernate.save(entity);
 	}
 	
 	public void updateCountry(Country entity) {
 		 hibernate.update(entity);
 	}
 	
+	public void insertCity(City entity) {
+		hibernate.save(entity);
+	}
+	
+	
 	@SuppressWarnings("unchecked")
-	public List<Country> listCountry() {
-		String queryStr = "from " + Country.class.getSimpleName() + " fetch all properties order by id";
+	public List<Country> listCountry(int pageNum) {
+		String queryStr = "from " + Country.class.getSimpleName() + " fetch all properties order by name";
 		System.out.println(queryStr);
-		Query query = getCurrentSession().createQuery(queryStr);
+		Query query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(20);
 		return (List<Country>)query.list();
 	}
 	
@@ -115,7 +126,7 @@ public class ContactBookDAO {
 		Query query;
 		q=q.trim().replaceAll(" +", " ");
 		System.out.println(q);
-		String queryStr = "from " + Country.class.getSimpleName() + " fetch all properties  where name like '%"+q+"%' order by id";
+		String queryStr = "from " + Country.class.getSimpleName() + " fetch all properties  where name like '%"+q+"%' order by name";
 		query = getCurrentSession().createQuery(queryStr);
 		
 		return (List<Country>)query.list();
@@ -125,6 +136,14 @@ public class ContactBookDAO {
 		return hibernate.getSessionFactory().getCurrentSession();
 	}
 
+	     
+	public void runSchemaGeneration() {
+	  SchemaExport export 
+	    = new SchemaExport(lsfb.getConfiguration());
+	  export.setOutputFile("import.sql");
+	  export.setDelimiter(";");
+	  export.execute(true, false, false, true);
+	}
 }
 
 
