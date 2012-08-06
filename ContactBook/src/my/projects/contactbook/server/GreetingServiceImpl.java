@@ -34,8 +34,8 @@ public class GreetingServiceImpl implements GreetingService {
 
 	@Transactional(readOnly=true)
 	@Override
-	public long getContactListSize() {
-		long listSize = dao.listSize();
+	public int getContactListSize() {
+		int listSize = dao.listSize();
 		return listSize;
 	}
 	
@@ -43,7 +43,7 @@ public class GreetingServiceImpl implements GreetingService {
 	@Transactional(readOnly=true)
 	@Override
 	public List<Contact> getContactList(int pageNum) {
-		List<Contact> contacts = dao.list(pageNum);
+		List<Contact> contacts = dao.list();
 		for(Contact contact : contacts) {
 			contact.setPhones(GWTUtil.makeGWTSafe(contact.getPhones()));
 		}

@@ -44,15 +44,15 @@ public class ContactBookDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Contact> list(int pageNum) {
+	public List<Contact> list() {
 		//runSchemaGeneration();
 		String queryStr = "SELECT c FROM Contact c order by c.id";
 		System.out.println(queryStr);
-		Query query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
+		Query query = getCurrentSession().createQuery(queryStr);
 		return (List<Contact>)query.list();
 	}
 	
-	public long listSize() {
+	public int listSize() {
 		String queryStr = "SELECT c FROM Contact c order by c.id";
 		System.out.println(queryStr);
 		Query query = getCurrentSession().createQuery(queryStr);
