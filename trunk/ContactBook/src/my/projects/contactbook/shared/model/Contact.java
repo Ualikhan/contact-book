@@ -12,18 +12,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import my.projects.contactbook.shared.Phone;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
+import sun.print.resources.serviceui;
+
 @Entity
 public class Contact implements Serializable{
-
+	
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;

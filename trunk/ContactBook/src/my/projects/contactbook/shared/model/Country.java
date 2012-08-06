@@ -28,7 +28,7 @@ public class Country implements Serializable{
 	@Column(name="NAME",nullable=false,unique=true)
 	private String name;
 	
-	@Column(name="CODE",nullable=false)
+	@Column(name="CODE",nullable=false,unique=false)
 	private int code;
 	
 	@OneToMany(fetch=FetchType.EAGER,mappedBy="country")

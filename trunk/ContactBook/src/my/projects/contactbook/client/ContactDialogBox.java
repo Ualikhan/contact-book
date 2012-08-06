@@ -6,9 +6,11 @@ import java.util.List;
 import my.projects.contactbook.shared.FieldVerifier;
 import my.projects.contactbook.shared.Phone;
 import my.projects.contactbook.shared.model.Contact;
+import my.projects.contactbook.shared.model.Country;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -22,8 +24,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 
 public class ContactDialogBox extends DialogBox implements ClickListener {
+	
+   
+	
 	final static String enterValidNumber="Please enter valid number!";
 		  DialogBox current;
 		  Grid phonesPanel;
@@ -35,6 +43,8 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 			  if(action.equals("add")){
 				  
 		    setText("Add contact");
+	
+		   
 		    
 		    InlineLabel surnameLabel=new InlineLabel("Surname");
 		     final TextBox surname=new TextBox();
@@ -150,16 +160,12 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						ListBox type=(ListBox) phonesPanel.getWidget(i,2);
 													
 						Phone newPhone=new Phone();
-						if(FieldVerifier.isValidNumber(number.getValue())){
+						
 						newPhone.setNumber(number.getValue());
 						newPhone.setType(type.getItemText(type.getSelectedIndex()));
 						
 						phones.add(newPhone);
-						}
-						else{
-							validNumbers=false;
-							number.setValue(enterValidNumber);
-						}
+						
 					}
 					if(validNumbers){
 					c.setPhones(phones);
@@ -349,6 +355,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 								public void onClick(Widget sender) {
 									// TODO Auto-generated method stub
 									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
+									current.setPopupPosition(getPopupLeft()-100, getPopupTop());
 									pd.show();
 									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
 									pd.setArgument1(sender.getLayoutData());

@@ -18,22 +18,22 @@ public interface GreetingServiceAsync {
 
 	void get(Long id, AsyncCallback<Contact> callback);
 
-	void list(int pageNum, AsyncCallback<List<Contact>> callback);
+	void getContactList(int pageNum, AsyncCallback<List<Contact>> callback);
 
 	void update(Contact contact, AsyncCallback<Void> callback);
 	
 	void insert(Contact contact, AsyncCallback<Long> callback);
 
-	void listByQuery(String query, int pageNum,
+	void getContactListByQuery(String query, int pageNum,
 			AsyncCallback<List<Contact>> callback);
 
-	void listCountry(AsyncCallback<List<Country>> callback);
+	void listCountry(int pageNum, AsyncCallback<List<Country>> callback);
 	
 	
 	void getCountry(String name, AsyncCallback<Country> callback);
 
 	void getCity(String name, AsyncCallback<City> callback);
 
-	void listSize(AsyncCallback<Integer> callback);
+	void getContactListSize(AsyncCallback<Long> callback);
 
 }
