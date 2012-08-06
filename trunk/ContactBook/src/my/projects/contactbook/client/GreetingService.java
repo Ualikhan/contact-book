@@ -24,7 +24,7 @@ public interface GreetingService extends RemoteService {
 	public Long insert(Contact contact);
 	public void delete(Contact contact);	
 	public List<Country> listCountry(int pageNum);
-	public long getContactListSize();
+	public int getContactListSize();
 	public Contact get(Long id);
 	Country getCountry(String name);
 	City getCity(String name);

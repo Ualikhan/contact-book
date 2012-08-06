@@ -63,6 +63,7 @@ import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
@@ -103,6 +104,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
@@ -111,12 +113,12 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class ContactBook implements EntryPoint {
 	
 	InlineLabel searchLabel;
-	TextBox searchText;
+	static TextBox searchText;
 	static Long selectedIndex;
-	private static int pageNumber;
-	private static int selectedLink=0;
 	static HorizontalPanel thirdPanel;
 	private boolean success;
+	static Integer listSize;
+	static List<Contact> contactList=new ArrayList<Contact>();
 	static CellTable<Contact> table = new CellTable<Contact>();
     static ListDataProvider<Contact> dataProvider = new ListDataProvider<Contact>();
 	static class PhoneCell extends AbstractCell<List<Phone>> {
@@ -154,7 +156,6 @@ public class ContactBook implements EntryPoint {
 	static GreetingServiceAsync service=GWT.create(GreetingService.class);
 	
 	  public void onModuleLoad() {
-		  selectedLink=0;
 		  thirdPanel=new HorizontalPanel();
 		  success=false;
 		  searchLabel=new InlineLabel("Enter some name to search:");
@@ -180,11 +181,15 @@ public class ContactBook implements EntryPoint {
 
 						@Override
 						public void onSuccess(List<Contact> result) {
-							 List<Contact> list = dataProvider.getList();
-							 list.clear();
-							 for(Contact c:result)
-								 list.add(c);
-						    					
+							
+							List<Contact> list=dataProvider.getList();
+							list.clear();
+							for(Contact c:result)
+								list.add(c);
+							
+							table.setRowCount(result.size());
+							table.setRowData(0, result);
+						    table.redraw();	
 						}
 					});
 					}
@@ -195,8 +200,28 @@ public class ContactBook implements EntryPoint {
 		  
 		  
 	       table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		   table.setPageSize(10);
-		   
+		   //table.setPageSize(10);
+		  table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				// TODO Auto-generated method stub
+				Range range = table.getVisibleRange();
+			    int start = range.getStart();
+			    int length = range.getLength();
+			    contactList=dataProvider.getList();
+			    List<Contact> toSet = new ArrayList<Contact>(length);
+			    for (int i = start; i < start + length && i < contactList.size(); i++)
+			        toSet.add((Contact) contactList.get(i));
+			    table.setRowData(start, toSet);	
+			}
+		});
+		   SimplePager.Resources pagerResources = 
+				   GWT.create(SimplePager.Resources.class); 
+				                   SimplePager pager = new SimplePager(TextLocation.CENTER, 
+				   pagerResources, false, 0, true); 
+				                    pager.setDisplay(table); 
+				                   pager.setPageSize(10); 
 		   updateListSize();			 
 		   updateTable();
 					
@@ -360,6 +385,7 @@ public class ContactBook implements EntryPoint {
 							@Override
 							public void onSuccess(Void result) {
 								// TODO Auto-generated method stub
+								searchText.setValue("");
 								list.remove(c);
 								updateListSize();			 
 								updateTable();
@@ -390,10 +416,12 @@ public class ContactBook implements EntryPoint {
 	    HorizontalPanel firstPanel=new HorizontalPanel();
 	    firstPanel.add(searchLabel);
 	    firstPanel.add(searchText);
-	    
+	   
 	    HorizontalPanel secondPanel=new HorizontalPanel();
 	    secondPanel.add(table);
 	    secondPanel.add(actionPanel);
+	    
+	    thirdPanel.add(pager);
 	    
 	    table.setWidth("90%");
 	    DOM.setStyleAttribute(table.getElement(), "margin","20px" );
@@ -404,9 +432,7 @@ public class ContactBook implements EntryPoint {
 	      
 	  }
 	  public static void updateTable(){
-		  if(pageNumber>0){
-		  System.out.println("selec "+selectedLink);
-		   service.getContactList(selectedLink*10,new AsyncCallback<List<Contact>>() {
+		   service.getContactList(0,new AsyncCallback<List<Contact>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -416,23 +442,23 @@ public class ContactBook implements EntryPoint {
 				@Override
 				public void onSuccess(List<Contact> result) {
 					if(result.size()==0){
-						selectedLink=selectedLink-1;
-					    updateTable();
+				    updateTable();
 					}
 					else{
-					 List<Contact> list = dataProvider.getList();
-					 list.clear();
-					 for(Contact c:result)
-						 list.add(c);
-				  
+						List<Contact> list=dataProvider.getList();
+						list.clear();
+						for(Contact c:result)
+							list.add(c);
+						table.setRowCount(result.size());
+						table.setRowData(0, result);
 					}
 				}
 			});
-		  }
+		  
 	  }
 	  
 	  public static void updateListSize(){
-		  service.getContactListSize(new AsyncCallback<Long>() {
+		  service.getContactListSize(new AsyncCallback<Integer>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -441,127 +467,21 @@ public class ContactBook implements EntryPoint {
 				}
 
 				@Override
-				public void onSuccess(Long result) {
+				public void onSuccess(Integer result) {
 					// TODO Auto-generated method stub
-					thirdPanel.clear();
-					pageNumber=(int) (result/table.getPageSize());
-					if(result%table.getPageSize()!=0)
-						   pageNumber++;
-					System.out.println("PageNumber"+pageNumber);
-				    if(pageNumber>0)
-				    	selectedLink=1;
-				    updateTable();
-				    if(pageNumber>1){
-					if(pageNumber<=10){
-						    for(int i=0;i<pageNumber;i++){
-						   
-						    	Anchor anchor=new Anchor((i+1)+"");
-						    	anchor.setStyleName("linkAnchor");
-						    	anchor.addClickListener(new ClickListener() {
-									
-									@Override
-									@Deprecated
-									public
-									void onClick(Widget sender) {
-										// TODO Auto-generated method stub
-										Anchor a=(Anchor) sender;
-										int pageNum=Integer.parseInt(a.getText());
-										selectedLink=pageNum-1;
-										System.out.println(pageNum);
-										pageNum=(pageNum-1)*10;
-										service.getContactList(pageNum, new AsyncCallback<List<Contact>>() {
-
-											@Override
-											public void onFailure(Throwable caught) {
-												// TODO Auto-generated method stub
-												
-											}
-
-											@Override
-											public void onSuccess(List<Contact> result) {
-												// TODO Auto-generated method stub
-												
-												List<Contact> list = dataProvider.getList();
-												list.clear();
-												 for(Contact c:result)
-													 list.add(c);
-											  table.redraw();
-												    }
-									
-											
-										});
-									}
-								});
-						   	thirdPanel.add(anchor);
-						    //anchor.set
-						    }
-					}
-					else{
-						
-						for(int i=0;i<10;i++){
-							   
-					    	Anchor anchor=new Anchor((i+1)+"");
-					    	anchor.setStyleName("linkAnchor");
-					    	anchor.addClickListener(new ClickListener() {
-								
-								@Override
-								@Deprecated
-								public
-								void onClick(Widget sender) {
-									// TODO Auto-generated method stub
-									Anchor a=(Anchor) sender;
-									int pageNum=Integer.parseInt(a.getText());
-									System.out.println(pageNum);
-									selectedLink=pageNum-1;
-									pageNum=(pageNum-1)*10;
-									service.getContactList(pageNum, new AsyncCallback<List<Contact>>() {
-
-										@Override
-										public void onFailure(Throwable caught) {
-											// TODO Auto-generated method stub
-											
-										}
-
-										@Override
-										public void onSuccess(List<Contact> result) {
-											// TODO Auto-generated method stub
-											List<Contact> list = dataProvider.getList();
-											list.clear();
-											 for(Contact c:result)
-												 list.add(c);
-										  table.redraw();
-											    }
-								
-										
-									});
-								}
-							});
-					   	thirdPanel.add(anchor);
-					    //anchor.set
-					    }
-						Anchor anchor=new Anchor(">>");
-				    	anchor.setStyleName("linkAnchor");
-				    	anchor.addClickListener(new ClickListener() {
-							
-							@Override
-							@Deprecated
-							public
-							void onClick(Widget sender) {
-								// TODO Auto-generated method stub
-								thirdPanel.clear();
-								
-							}
-						});
-				    	thirdPanel.add(anchor);
-					}
-				}
+					listSize=(Integer) result;
+					table.setRowCount(listSize);
+					 updateTable();
 				}
 			});
 	  }
+	   
+	 
+
 	  
 	  static void addNewContact(){
+		  searchText.setValue("");
 		  updateListSize();
-		  selectedLink=pageNumber;
 		  updateTable();
 	  }
 	  

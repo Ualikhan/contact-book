@@ -29,11 +29,9 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 
 public class ContactDialogBox extends DialogBox implements ClickListener {
+	 
 	
-   
-	
-	final static String enterValidNumber="Please enter valid number!";
-		  DialogBox current;
+	DialogBox current;
 		  Grid phonesPanel;
 		  
 		  public ContactDialogBox(String action) {
@@ -114,18 +112,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 				    int index=phonesPanel.getRowCount();
 				    phoneLabel.setLayoutData(index);
 				    phoneNumber.setLayoutData(index);
-				    phoneNumber.addClickListener(new ClickListener() {
-						
-						@Override
-						@Deprecated
-						public
-						void onClick(Widget sender) {
-							// TODO Auto-generated method stub
-							TextBox tb=(TextBox) sender;
-							if(tb.getValue().equals(enterValidNumber))
-							tb.setValue("");
-						}
-					});
+				    
 				    phoneType.setLayoutData(index);
 				    chooseNumberButton.setLayoutData(index);
 				    
@@ -149,11 +136,16 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 				void onClick(Widget sender) {
 					// TODO Auto-generated method stub
 					boolean validNumbers=true;
+					boolean validName=true;
+					boolean validSurname=true;
 					final List<Contact> list = ContactBook.dataProvider.getList();
 					final Contact c=new Contact();
+					if(FieldVerifier.isValidName(name.getValue()))
 					c.setName(name.getValue());
+					else validName=false;
+					if(FieldVerifier.isValidSurname(name.getValue()))
 					c.setSurname(surname.getValue());
-					
+					else validSurname=false;
 					List<Phone> phones=new ArrayList<Phone>();
 					for(int i=0;i<phonesPanel.getRowCount();i++){
 						TextBox number=(TextBox) phonesPanel.getWidget(i,1);
@@ -163,13 +155,13 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						
 						newPhone.setNumber(number.getValue());
 						newPhone.setType(type.getItemText(type.getSelectedIndex()));
-						
+						if(FieldVerifier.isValidNumber(newPhone.getNumber()))
 						phones.add(newPhone);
 						
 					}
 					if(validNumbers){
 					c.setPhones(phones);
-					
+					if(validName && validSurname){
 			        ContactBook.service.insert(c, new AsyncCallback<Long>() {
 						
 						@Override
@@ -185,9 +177,12 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 							Window.alert(caught.getMessage());
 						}
 					});
-				   
-			        	
-			        
+					}
+					else if(!validName)
+						name.setValue("Enter valid name");
+					else if(!validSurname)
+						surname.setValue("Enter valid surname");
+					
 				    hide();
 					}
 						
@@ -270,6 +265,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 								public void onClick(Widget sender) {
 									// TODO Auto-generated method stub
 									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
+									current.setPopupPosition(getPopupLeft()-120, getPopupTop());
 									pd.show();
 									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
 									pd.setArgument1(sender.getLayoutData());
@@ -302,18 +298,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						    int index=phonesPanel.getRowCount();
 						    phoneLabel.setLayoutData(index);
 						    phoneNumber.setLayoutData(index);
-						    phoneNumber.addClickListener(new ClickListener() {
-								
-								@Override
-								@Deprecated
-								public
-								void onClick(Widget sender) {
-									// TODO Auto-generated method stub
-									TextBox tb=(TextBox) sender;
-									if(tb.getValue().equals(enterValidNumber))
-									tb.setValue("");
-								}
-							});
+						   
 						    phoneType.setLayoutData(index);
 						    deletePhoneButton.setLayoutData(index);
 						    chooseNumberButton.setLayoutData(index);
@@ -355,7 +340,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 								public void onClick(Widget sender) {
 									// TODO Auto-generated method stub
 									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
-									current.setPopupPosition(getPopupLeft()-100, getPopupTop());
+									current.setPopupPosition(getPopupLeft()-120, getPopupTop());
 									pd.show();
 									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
 									pd.setArgument1(sender.getLayoutData());
@@ -386,18 +371,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						    int index=phonesPanel.getRowCount();
 						    phoneLabel.setLayoutData(index);
 						    phoneNumber.setLayoutData(index);
-						    phoneNumber.addClickListener(new ClickListener() {
-								
-								@Override
-								@Deprecated
-								public
-								void onClick(Widget sender) {
-									// TODO Auto-generated method stub
-									TextBox tb=(TextBox) sender;
-									if(tb.getValue().equals(enterValidNumber))
-									tb.setValue("");
-								}
-							});
+						    
 						    phoneType.setLayoutData(index);
 						    chooseNumberButton.setLayoutData(index);
 						    deletePhoneButton.setLayoutData(index);
@@ -419,12 +393,22 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						public
 						void onClick(Widget sender) {
 							// TODO Auto-generated method stub
+							
 							List<Contact> list = ContactBook.dataProvider.getList();
 							boolean validNumbers=true;
+							boolean validName=true;
+							boolean validSurname=true;
+							
 							for(Contact c:list)
 						    	if(c.getId()==ContactBook.selectedIndex){
-						    c.setSurname(surname.getValue());
-						    c.setName(name.getValue());
+						    if(FieldVerifier.isValidName(name.getValue()) && !name.getValue().equals("Enter valid name!"))		
+						    	c.setName(name.getValue());
+						    else validName=false;
+							
+						    if(FieldVerifier.isValidSurname(surname.getValue())&& !name.getValue().equals("Enter valid surname!"))		
+						    	 c.setSurname(surname.getValue());
+						      	else validSurname=false;
+							
 						    c.getPhones().clear();
 						    for(int i=0;i<phonesPanel.getRowCount();i++){
 								TextBox number=(TextBox) phonesPanel.getWidget(i,1);
@@ -436,13 +420,11 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 								c.addPhone(newPhone);
 							
 								}
-								else{
-									validNumbers=false;
-									number.setValue(enterValidNumber);
-								}
+								
 								
 								}
-						    if(validNumbers){
+						    if(validName && validSurname){
+						        
 						    	ContactBook.service.update(c, new AsyncCallback<Void>() {
 
 									@Override
@@ -460,6 +442,10 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						    
 						    hide();
 						    }
+						    else if(!validName)
+								name.setValue("Enter valid name!");
+							else if(!validSurname)
+								surname.setValue("Enter valid surname!");
 						    	}
 						}
 					});

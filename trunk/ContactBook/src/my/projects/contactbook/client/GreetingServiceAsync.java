@@ -34,6 +34,6 @@ public interface GreetingServiceAsync {
 
 	void getCity(String name, AsyncCallback<City> callback);
 
-	void getContactListSize(AsyncCallback<Long> callback);
+	void getContactListSize(AsyncCallback<Integer> callback);
 
 }
