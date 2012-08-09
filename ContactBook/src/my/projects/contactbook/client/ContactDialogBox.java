@@ -9,6 +9,8 @@ import my.projects.contactbook.shared.model.Contact;
 import my.projects.contactbook.shared.model.Country;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -28,112 +30,48 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 
-public class ContactDialogBox extends DialogBox implements ClickListener {
+public class ContactDialogBox extends DialogBox implements ClickHandler {
 	 
-	
 	DialogBox current;
-		  Grid phonesPanel;
-		  
-		  public ContactDialogBox(String action) {
-			  setPopupPosition(getPopupLeft()-100, getPopupTop());
-			  current=this;
-			  
-			  if(action.equals("add")){
-				  
-		    setText("Add contact");
+	Grid phonesPanel;
+	InlineLabel surnameLabel;
+	TextBox surname;
+	InlineLabel nameLabel;
+	TextBox name;
+	InlineLabel phoneLabel;
+	Button addPhoneButton;
+	Button okButton;
+	Button closeButton;
+	HorizontalPanel bottomPanel;
+	FlexTable flexTable;
+    int dialogX;
 	
-		   
-		    
-		    InlineLabel surnameLabel=new InlineLabel("Surname");
-		     final TextBox surname=new TextBox();
-		    InlineLabel nameLabel=new InlineLabel("Name");
-		    final TextBox name=new TextBox();
-		    
-		    phonesPanel=new Grid(0, 5);
-		    
-		    InlineLabel phoneLabel=new InlineLabel("Phones");
-		 
-		    Button addPhoneButton = new Button();
-		    addPhoneButton.addClickListener(new ClickListener() {
-				
-				@Override
-				@Deprecated
-				public
-				void onClick(Widget sender) {
-					// TODO Auto-generated method stub
-
-					current.setPopupPosition(getPopupLeft(), getPopupTop()-10);
-					TextBox phoneNumber=new TextBox();
-					
-					InlineLabel phoneLabel=new InlineLabel("Phone");
-					ListBox phoneType=new ListBox();
-					phoneType.addItem("mobile");
-				    phoneType.addItem("home");
-				    phoneType.addItem("work");
-				    
-				    Button chooseNumberButton=new Button();
-				    chooseNumberButton.addClickListener(new ClickListener() {
-						
-						@Override
-						@Deprecated
-						public void onClick(Widget sender) {
-							// TODO Auto-generated method stub
-							sender.setStyleName("chooseNumberButtonActive");
-							ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
-							pd.show();
-							pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
-							pd.setArgument1(sender.getLayoutData());
-							pd.setArgument2(current);
-							
-						}
-					});
-				     
-				    Button deletePhoneButton=new Button();
-				    deletePhoneButton.addClickListener(new ClickListener() {
-						
-						@Override
-						@Deprecated
-						public
-						void onClick(Widget sender) {
-							// TODO Auto-generated method stub
-							//int removeIndex=Integer.parseInt(sender.getTitle());
-							for(int i=0;i<phonesPanel.getRowCount();i++)
-								if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
-								phonesPanel.removeRow(i);
-							}
-								
-								
-						}
-					});
-				    chooseNumberButton.setStyleName("chooseNumberButton");
-				    deletePhoneButton.setStyleName("deletePhoneButton");
-				   
+		  public ContactDialogBox(String action) {
+			  setText("Add contact");
+			  current=this;
+			  surnameLabel=new InlineLabel("Surname");
+			  surname=new TextBox();
+			  nameLabel=new InlineLabel("Name");
+			  name=new TextBox();
+			    
+			  phonesPanel=new Grid(0, 5);
+			  phoneLabel=new InlineLabel("Phones");
+			  addPhoneButton = new Button();
+			  okButton = new Button("OK");
+			  closeButton = new Button("Close", this);
+			  bottomPanel=new HorizontalPanel();
+			  flexTable = new FlexTable();
+			  dialogX=getPopupLeft();
+			    
+			  if(action.equals("add")){
 			
-				    int index=phonesPanel.getRowCount();
-				    phoneLabel.setLayoutData(index);
-				    phoneNumber.setLayoutData(index);
-				    
-				    phoneType.setLayoutData(index);
-				    chooseNumberButton.setLayoutData(index);
-				    
-				    deletePhoneButton.setLayoutData(index);
-				    phonesPanel.insertRow(index);
-				   
-				    phonesPanel.setWidget(index, 0, phoneLabel);
-				    phonesPanel.setWidget(index, 1, phoneNumber);
-				    phonesPanel.setWidget(index, 2, phoneType);
-				    phonesPanel.setWidget(index, 3, deletePhoneButton);
-				    phonesPanel.setWidget(index, 4, chooseNumberButton);
-					   
-				}
-		    });
+			addPhoneButton.addClickHandler(this);
 		    addPhoneButton.setStyleName("addPhoneButton");
-		    Button okButton = new Button("OK", new ClickListener() {
+		  
+		    okButton.addClickHandler(new ClickHandler() {
 				
 				@Override
-				@Deprecated
-				public
-				void onClick(Widget sender) {
+				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
 					boolean validNumbers=true;
 					boolean validName=true;
@@ -189,17 +127,19 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 					
 				}
 			});
-		    Button closeButton = new Button("Close", this);
 		    
+			  
+		    //bottomPanel.setStyleName("bottomPanel");
+		    //okButton.setStyleName("okButtonDialog");
+		    //closeButton.setStyleName("closeButtonDialog");
+		    DOM.setElementAttribute(bottomPanel.getElement(), "id", "bottomPanel");
 		    
-		    HorizontalPanel hp=new HorizontalPanel();
-		    hp.setStyleName("hp");
-		    okButton.setStyleName("okButtonDialog");
-		    closeButton.setStyleName("closeButtonDialog");
-		    hp.add(okButton);
-		    hp.add(closeButton);
+		    DOM.setElementAttribute(okButton.getElement(), "id", "okButtonDialog");
+		    DOM.setElementAttribute(closeButton.getElement(), "id", "closeButtonDialog");
 		    
-		   FlexTable flexTable = new FlexTable();
+		    bottomPanel.add(okButton);
+		    bottomPanel.add(closeButton);
+		    
 		    flexTable.setWidget(0, 0, surnameLabel);
 		    flexTable.setWidget(0, 1, surname);
 		    flexTable.setWidget(1, 0, nameLabel);
@@ -207,7 +147,7 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 		    flexTable.setWidget(2, 0, phoneLabel);
 		    flexTable.setWidget(2, 1, addPhoneButton);
 		    flexTable.setWidget(3, 0, phonesPanel);
-		    flexTable.setWidget(4, 0, hp);
+		    flexTable.setWidget(4, 0, bottomPanel);
 		    
 		    
 		    flexTable.setStyleName("panel flexTable");
@@ -231,24 +171,17 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 
 			  else if(action.equals("edit")){
 				    setText("Edit contact");
-				    Label surnameLabel=new Label("Surname");
 				    
-				    final TextBox surname=new TextBox();
-				    
-				    Label nameLabel=new Label("Name");
-				    final TextBox name=new TextBox();
 				    List<Contact> list = ContactBook.dataProvider.getList();
 
 				    for(Contact c:list)
 				    	if(c.getId()==ContactBook.selectedIndex){
-				    surname.setValue(c.getSurname());
-				    name.setValue(c.getName());
+				    		surname.setValue(c.getSurname());
+				    		name.setValue(c.getName());
 				    
 				    	}
 				    
-				    phonesPanel=new Grid(0, 5);
-				    
-				    for(Contact c:list)
+				   for(Contact c:list)
 				    	if(c.getId()==ContactBook.selectedIndex){
 				    		for(int i=0;i<c.getPhones().size();i++){
 				    		TextBox phoneNumber=new TextBox();
@@ -259,13 +192,14 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						    phoneType.addItem("home");
 						    phoneType.addItem("work");
 						    Button chooseNumberButton=new Button();
-						    chooseNumberButton.addClickListener(new ClickListener() {						
+						    chooseNumberButton.addClickHandler(new ClickHandler() {
+								
 								@Override
-								@Deprecated
-								public void onClick(Widget sender) {
+								public void onClick(ClickEvent event) {
 									// TODO Auto-generated method stub
+									Widget sender=(Widget) event.getSource();
 									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
-									current.setPopupPosition(getPopupLeft()-120, getPopupTop());
+									current.setPopupPosition(getPopupLeft()-200, getPopupTop());
 									pd.show();
 									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
 									pd.setArgument1(sender.getLayoutData());
@@ -274,19 +208,20 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 							});
 						    
 						    Button deletePhoneButton=new Button();
-						    deletePhoneButton.addClickListener(new ClickListener() {
+						    deletePhoneButton.addClickHandler(new ClickHandler() {
 								
 								@Override
-								@Deprecated
-								public
-								void onClick(Widget sender) {
+								public void onClick(ClickEvent event) {
 									// TODO Auto-generated method stub
-									//int removeIndex=Integer.parseInt(sender.getTitle());
+									current.setPopupPosition(getPopupLeft(), getPopupTop()+20);
+									Widget sender=(Widget) event.getSource();
+									
 									for(int i=0;i<phonesPanel.getRowCount();i++)
 										if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
 										phonesPanel.removeRow(i);
 									}									
 										
+								
 								}
 							});
 						    chooseNumberButton.setStyleName("chooseNumberButton");
@@ -311,91 +246,14 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 				    		}
 				    	}
 				    
-				    InlineLabel phoneLabel=new InlineLabel("Phones");
-				    				    
-				    final Contact c=new Contact();
-					
-				    Button addPhoneButton = new Button();
-				    addPhoneButton.addClickListener(new ClickListener() {
+				   addPhoneButton.addClickHandler(this);
+				   addPhoneButton.setStyleName("addPhoneButton");
+				   okButton.addClickHandler(new ClickHandler() {
 						
 						@Override
-						@Deprecated
-						public
-						void onClick(Widget sender) {
+						public void onClick(ClickEvent event) {
 							// TODO Auto-generated method stub
-							current.setPopupPosition(getPopupLeft(), getPopupTop()-10);
-							
-							TextBox phoneNumber=new TextBox();
-							InlineLabel phoneLabel=new InlineLabel("Phone");
-							ListBox phoneType=new ListBox();
-							phoneType.addItem("mobile");
-						    phoneType.addItem("home");
-						    phoneType.addItem("work");
-						    
-						    Button chooseNumberButton=new Button();
-						    chooseNumberButton.addClickListener(new ClickListener() {
-								
-								@Override
-								@Deprecated
-								public void onClick(Widget sender) {
-									// TODO Auto-generated method stub
-									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
-									current.setPopupPosition(getPopupLeft()-120, getPopupTop());
-									pd.show();
-									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
-									pd.setArgument1(sender.getLayoutData());
-									pd.setArgument2(current);
-									
-								}
-							});
-						    Button deletePhoneButton=new Button();
-						    deletePhoneButton.addClickListener(new ClickListener() {
-								
-								@Override
-								@Deprecated
-								public
-								void onClick(Widget sender) {
-									// TODO Auto-generated method stub
-									//int removeIndex=Integer.parseInt(sender.getTitle());
-									for(int i=0;i<phonesPanel.getRowCount();i++)
-										if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
-										phonesPanel.removeRow(i);
-									}
-										
-										
-								}
-							});
-						    chooseNumberButton.setStyleName("chooseNumberButton");
-						    deletePhoneButton.setStyleName("deletePhoneButton");
-						    
-						    int index=phonesPanel.getRowCount();
-						    phoneLabel.setLayoutData(index);
-						    phoneNumber.setLayoutData(index);
-						    
-						    phoneType.setLayoutData(index);
-						    chooseNumberButton.setLayoutData(index);
-						    deletePhoneButton.setLayoutData(index);
-						    phonesPanel.insertRow(index);
-						    phonesPanel.setWidget(index, 0, phoneLabel);
-						    phonesPanel.setWidget(index, 1, phoneNumber);
-						    phonesPanel.setWidget(index, 2, phoneType);
-						    phonesPanel.setWidget(index, 3, deletePhoneButton);
-						    phonesPanel.setWidget(index, 4, chooseNumberButton);
-						}
-					});
-				      
-				    addPhoneButton.setStyleName("addPhoneButton");
-				    
-				    Button okButton = new Button("OK", new ClickListener() {
-						
-						@Override
-						@Deprecated
-						public
-						void onClick(Widget sender) {
-							// TODO Auto-generated method stub
-							
 							List<Contact> list = ContactBook.dataProvider.getList();
-							boolean validNumbers=true;
 							boolean validName=true;
 							boolean validSurname=true;
 							
@@ -450,13 +308,9 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 						}
 					});
 				    
-				    Button closeButton = new Button("Close", this);
+				    bottomPanel.add(okButton);
+				    bottomPanel.add(closeButton);
 				    
-				    HorizontalPanel hp=new HorizontalPanel();
-				    hp.add(okButton);
-				    hp.add(closeButton);
-				    
-				    FlexTable flexTable = new FlexTable();
 				    flexTable.setWidget(0, 0, surnameLabel);
 				    flexTable.setWidget(0, 1, surname);
 				    flexTable.setWidget(1, 0, nameLabel);
@@ -464,9 +318,9 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 				    flexTable.setWidget(2, 0, phoneLabel);
 				    flexTable.setWidget(2, 1, addPhoneButton);
 				    flexTable.setWidget(3, 0, phonesPanel);
-				    flexTable.setWidget(4, 0,hp);
+				    flexTable.setWidget(4, 0,bottomPanel);
 				    
-				    hp.setStyleName("hp");
+				    bottomPanel.setStyleName("bottomPanel");
 				    okButton.setStyleName("okButtonDialog");
 				    closeButton.setStyleName("closeButtonDialog");
 				   
@@ -507,10 +361,83 @@ public class ContactDialogBox extends DialogBox implements ClickListener {
 			  		sender.setStyleName("chooseNumberButton");
 				  
 		  }
+			  current.setPopupPosition(getPopupLeft()+200, getPopupTop());
 		  }
-		  public void onClick(Widget sender) {	
-		    hide();
-		  }
+		 
+		@Override
+		public void onClick(ClickEvent event) {
+			// TODO Auto-generated method stub
+			if(event.getSource()==closeButton)
+			hide();
+			
+			if(event.getSource()==addPhoneButton){
+				current.setPopupPosition(getPopupLeft(), getPopupTop()-20);
+				TextBox phoneNumber=new TextBox();
+				
+				InlineLabel phoneLabel=new InlineLabel("Phone");
+				ListBox phoneType=new ListBox();
+				phoneType.addItem("mobile");
+			    phoneType.addItem("home");
+			    phoneType.addItem("work");
+			    
+			    Button chooseNumberButton=new Button();
+			    chooseNumberButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						Widget sender=(Widget) event.getSource();
+						current.setPopupPosition(getPopupLeft()-200, getPopupTop());
+						sender.setStyleName("chooseNumberButtonActive");
+						ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
+						pd.show();
+						pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
+						pd.setArgument1(sender.getLayoutData());
+						pd.setArgument2(current);
+						
+					}
+				});
+			     
+			    Button deletePhoneButton=new Button();
+			    deletePhoneButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						
+						current.setPopupPosition(getPopupLeft(), getPopupTop()+20);
+						Widget sender=(Widget) event.getSource();
+						for(int i=0;i<phonesPanel.getRowCount();i++)
+							if(phonesPanel.getWidget(i, 0).getLayoutData().toString().equals(sender.getLayoutData().toString())){
+							phonesPanel.removeRow(i);
+						}
+							
+							
+					}
+				});
+			    chooseNumberButton.setStyleName("chooseNumberButton");
+			    deletePhoneButton.setStyleName("deletePhoneButton");
+			   
+		
+			    int index=phonesPanel.getRowCount();
+			    phoneLabel.setLayoutData(index);
+			    phoneNumber.setLayoutData(index);
+			    
+			    phoneType.setLayoutData(index);
+			    chooseNumberButton.setLayoutData(index);
+			    
+			    deletePhoneButton.setLayoutData(index);
+			    phonesPanel.insertRow(index);
+			   
+			    phonesPanel.setWidget(index, 0, phoneLabel);
+			    phonesPanel.setWidget(index, 1, phoneNumber);
+			    phonesPanel.setWidget(index, 2, phoneType);
+			    phonesPanel.setWidget(index, 3, deletePhoneButton);
+			    phonesPanel.setWidget(index, 4, chooseNumberButton);
+			}
+			
+
+		}
 		 
 		}
 

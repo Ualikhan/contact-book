@@ -78,13 +78,19 @@ public class GreetingServiceImpl implements GreetingService {
 	@Override
 	public List<Country> listCountry(int pageNum) {
 		List<Country> countries = dao.listCountry(pageNum);
-		for(Country country : countries) {
-			country.setCities(GWTUtil.makeGWTSafe(country.getCities()));
-		}
+		
 		return countries;
 	}
 
 
+	@Transactional(readOnly=true)
+	@Override
+	public List<City> listCity(String countryName) {
+		List<City> countries = dao.listCity(countryName);
+		
+		return countries;
+	}
+	
 	@Transactional(readOnly=true)
 	@Override
 	public Contact get(Long id) {
@@ -93,14 +99,6 @@ public class GreetingServiceImpl implements GreetingService {
 		return t;
 	}
 
-	
-	@Transactional(readOnly=true)
-	public Country getCountry(String name) {
-		// TODO Auto-generated method stub
-		Country country=dao.getCountry(name);
-		country.setCities(GWTUtil.makeGWTSafe(country.getCities()));
-		return country;
-	}
 
 	@Transactional(readOnly=true)
 	public City getCity(String name) {
@@ -108,6 +106,14 @@ public class GreetingServiceImpl implements GreetingService {
 		City city=dao.getCity(name);
 		return city;
 	}
+
+	@Transactional(readOnly=true)
+	public Country getCountry(String name) {
+		// TODO Auto-generated method stub
+		Country country=dao.getCountry(name);
+		return country;
+	}
+
 }
 
 

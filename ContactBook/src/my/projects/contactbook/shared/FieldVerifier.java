@@ -52,6 +52,6 @@ public class FieldVerifier {
 		if (name == null) {
 			return false;
 		}
-		return name.length()>10;
+		return name.length()==11;
 	}
 }

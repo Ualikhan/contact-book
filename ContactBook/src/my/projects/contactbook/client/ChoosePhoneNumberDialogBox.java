@@ -9,6 +9,10 @@ import my.projects.contactbook.shared.model.Country;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.DOM;
@@ -32,10 +36,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 
-public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListener{
-	
-
-
+public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandler{
 	
 		  HorizontalPanel mainPanel;
 		  InlineLabel countryLabel;
@@ -52,80 +53,29 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 		  HorizontalPanel bottomPanel;
 		  ContactDialogBox parent;
 		  Object layoutData;
-		 int maxScroll;
+		  int maxScroll;
+		  
 		  
 		  private GreetingServiceAsync service=GWT.create(GreetingService.class);
 		  
 		  public ChoosePhoneNumberDialogBox(){
-			  maxScroll=0;
 			  this.parent=(ContactDialogBox) parent;
 			  countryLabel=new InlineLabel("Code of country");
 			  cityLabel=new InlineLabel("Code of city");
 			  numberLabel=new InlineLabel("Number");
 			  mainPanel=new HorizontalPanel();
 			  countryList=new ListBox();
-			 
-			  ((SourcesChangeEvents) countryList).addChangeListener(new ChangeListener() {
-				
-				@Override
-				@Deprecated
-				public
-				 void onChange(Widget sender) {
-					// TODO Auto-generated method stub
-					ListBox lb=(ListBox) sender;
-					final String countryName=lb.getItemText(lb.getSelectedIndex());
-					if(lb.getSelectedIndex()==0){
-						countryCode.setValue(null);
-						cityList.setSelectedIndex(0);
-						cityList.setEnabled(false);
-						cityCode.setValue("");
-					}
-					else{
-						cityList.setSelectedIndex(0);
-						cityCode.setValue("");
-						service.getCountry(countryName, new AsyncCallback<Country>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
-							
-							}
-
-							@Override
-							public void onSuccess(final Country result) {
-							// TODO Auto-generated method stub
-						
-							countryCode.setValue(result.getCode());
-							
-							cityList.setEnabled(true);
-							cityList.clear();
-							cityList.addItem("Select city code");
-							for(City city:result.getCities())
-								cityList.addItem(city.getName());
-							
-							cityList.addChangeListener(new ChangeListener() {
-								
-								@Override
-								@Deprecated
-								public
-								void onChange(Widget sender) {
-									// TODO Auto-generated method stub
-									ListBox cityLb=(ListBox) sender;
-									cityCode.setValue("");
-									String cityName=cityLb.getItemText(cityLb.getSelectedIndex());
-									for(City city:result.getCities())
-										if(city.getName().equals(cityName))
-											cityCode.setValue(city.getCode());
-																		
-								}
-							});
-						}
-					});
-				}
-				}
-			});
-			  			  
-			    service.listCountry(0,new AsyncCallback<List<Country>>() {
+			  countryCode=new IntegerBox();
+			  cityCode=new TextBox();
+			  numberText=new IntegerBox();
+			  table=new FlexTable();
+			  cityList=new ListBox();
+			  maxScroll=0;
+			  bottomPanel=new HorizontalPanel();
+			  okButton = new Button("OK");
+			  closeButton = new Button();
+			  
+			  service.listCountry(0,new AsyncCallback<List<Country>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -144,46 +94,87 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 		                }
 				}
 			});
-			    
-			    ScrollPanel sp=new ScrollPanel(countryList);
-			    sp.addScrollListener(new ScrollListener() {
+			  
+			  countryList.addChangeHandler(new ChangeHandler() {
 					
 					@Override
-					public void onScroll(Widget widget, int scrollLeft, int scrollTop) {
+					public void onChange(ChangeEvent event) {
 						// TODO Auto-generated method stub
-						System.out.println(scrollTop);
-						if(maxScroll<scrollTop)
-							 service.listCountry(scrollTop,new AsyncCallback<List<Country>>() {
+						
+						Widget sender=(Widget) event.getSource();
+						ListBox lb=(ListBox) sender;
+						final String countryName=lb.getItemText(lb.getSelectedIndex());
+						if(lb.getSelectedIndex()==0){
+							countryCode.setValue(null);
+							cityList.setSelectedIndex(0);
+							cityList.setEnabled(false);
+							cityCode.setValue("");
+						}
+						else{
+							
+							service.getCountry(countryName,new AsyncCallback<Country>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-										
-									}
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+									
+								}
 
-									@Override
-									public void onSuccess(final List<Country> result) {
-										// TODO Auto-generated method stub
-										countryList.addItem("Select country code");
-										cityList.addItem("Select city code");
-										cityList.setEnabled(false);
-										for (int i = 0; i < result.size(); i++) {
-							                  countryList.addItem(result.get(i).getName());
-							                }
-									}
+								@Override
+								public void onSuccess(Country result) {
+									// TODO Auto-generated method stub
+									countryCode.setValue(result.getCode());
+								}
 								});
 							
+							
+							cityList.setSelectedIndex(0);
+							cityCode.setValue("");
+							service.listCity(countryName, new AsyncCallback<List<City>>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+								
+								}
+
+								@Override
+								public void onSuccess(final List<City> result) {
+								// TODO Auto-generated method stub
+							
+								
+								cityList.setEnabled(true);
+								cityList.clear();
+								cityList.addItem("Select city code");
+								for(City city:result)
+									cityList.addItem(city.getName());
+								
+								cityList.addClickHandler(new ClickHandler() {
+									
+									@Override
+									public void onClick(ClickEvent event) {
+										// TODO Auto-generated method stub
+										
+										Widget sender=(Widget) event.getSource();
+										ListBox cityLb=(ListBox) sender;
+										cityCode.setValue("");
+										String cityName=cityLb.getItemText(cityLb.getSelectedIndex());
+										for(City city:result)
+											if(city.getName().equals(cityName))
+												cityCode.setValue(city.getCode());
+																			
+									}
+								});
+							}
+						});
+					}
 					}
 				});
-			  
-			  countryCode=new IntegerBox();
+				  
+				 	  
+			
 			  countryCode.setMaxLength(4);
-			  cityCode=new TextBox();
 			  cityCode.setMaxLength(7);
-			  numberText=new IntegerBox();
-			 
-			  table=new FlexTable();
-			  cityList=new ListBox();
 			  table.setWidget(0, 0, countryLabel);
 			  table.setWidget(0, 1, cityLabel);
 			  table.setWidget(0, 2, numberLabel);
@@ -192,34 +183,20 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 			  table.setWidget(2, 0, countryCode);
 			  table.setWidget(2, 1, cityCode);
 			  table.setWidget(2, 2, numberText);
+			  table.setWidget(3, 1, okButton);
+			  
 			  countryLabel.setStyleName("countryLabel");
 			  cityLabel.setStyleName("cityLabel");
 			  numberLabel.setStyleName("numberLabel");
 			  countryList.setStyleName("countryList");
 			  cityList.setStyleName("cityList");
-			  
 			  countryCode.setStyleName("countryCode");
 			  cityCode.setStyleName("cityCode");
 			  numberText.setStyleName("numberText");
 			  
-			  bottomPanel=new HorizontalPanel();
-			  okButton = new Button("OK", new ClickListener() {
-				  
-					@Override
-					@Deprecated
-					public
-					void onClick(Widget sender) {
-						// TODO Auto-generated method stub	
-					String phoneNum=countryCode.getValue()+"-"+cityCode.getValue()+"-"+numberText.getValue();
-				((ContactDialogBox) parent).setNumberText(layoutData,phoneNum);
-				((ContactDialogBox) parent).setStyle();
-			  	    hide();
-					}	  
-				});
-			   
-			  table.setWidget(3, 1, okButton);
-			  closeButton = new Button();
-			  closeButton.addClickListener(this);
+			 
+			  okButton.addClickHandler(this);
+			  closeButton.addClickHandler(this);
 			 
 			  okButton.setStyleName("okButton");
 			  closeButton.setStyleName("closeButtonPhone");
@@ -237,17 +214,29 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickListen
 		}
 		public void setArgument2(DialogBox parent) {
 			// TODO Auto-generated constructor stub
-			
 		this.parent=(ContactDialogBox) parent;
 		}
 
 		@Override
-		@Deprecated
-		public
-		void onClick(Widget sender) {
+		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
-		this.parent.setStyle();
-		hide();
+			if(event.getSource()==closeButton){
+			this.parent.setStyle();
+			hide();
+			}
+			
+			if(event.getSource()==okButton){
+				String phoneNum="";
+				if(countryCode.getValue()!=null)
+					phoneNum+=countryCode.getValue();
+				if(cityCode.getValue()!=null)
+					phoneNum+=cityCode.getValue();
+				if(numberText.getValue()!=null)
+					phoneNum+=numberText.getValue();
+				((ContactDialogBox) parent).setNumberText(layoutData,phoneNum);
+				((ContactDialogBox) parent).setStyle();
+				hide();
+			
+			}
 		}
-	
 }

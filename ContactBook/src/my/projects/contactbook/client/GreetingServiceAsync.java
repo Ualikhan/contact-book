@@ -28,12 +28,13 @@ public interface GreetingServiceAsync {
 			AsyncCallback<List<Contact>> callback);
 
 	void listCountry(int pageNum, AsyncCallback<List<Country>> callback);
-	
-	
-	void getCountry(String name, AsyncCallback<Country> callback);
 
 	void getCity(String name, AsyncCallback<City> callback);
 
 	void getContactListSize(AsyncCallback<Integer> callback);
+
+	void listCity(String countryName, AsyncCallback<List<City>> callback);
+
+	void getCountry(String name, AsyncCallback<Country> callback);
 
 }
