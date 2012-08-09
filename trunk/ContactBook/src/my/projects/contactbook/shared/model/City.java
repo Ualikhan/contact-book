@@ -30,9 +30,8 @@ public class City implements Serializable{
 	@Column(name="CODE",nullable=true,unique=false)
 	private String code;
 	
-	@ManyToOne
-	@JoinColumn(name="country",referencedColumnName="ID",nullable=false)
-	private Country country;
+	@Column(name="country",nullable=false)
+	private int country;
 	
 	public void setCode(String code) {
 		this.code = code;
@@ -42,11 +41,11 @@ public class City implements Serializable{
 		return code;
 	}
 	
-	public void setCountry(Country country) {
+	public void setCountry(int country) {
 		this.country = country;
 	}
 	
-	public Country getCountry() {
+	public int getCountry() {
 		return country;
 	}
 	

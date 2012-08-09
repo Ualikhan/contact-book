@@ -1,126 +1,65 @@
 package my.projects.contactbook.client;
 
-import java.lang.ref.PhantomReference;
 import java.util.*;
 
-import my.projects.contactbook.shared.FieldVerifier;
-import my.projects.contactbook.shared.model.City;
 import my.projects.contactbook.shared.model.Contact;
-import my.projects.contactbook.shared.model.Country;
 import my.projects.contactbook.shared.Phone;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.DateCell;
-import com.google.gwt.cell.client.DatePickerCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.cell.client.TextInputCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.InputElement;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.Style.TableLayout;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
-import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.editor.client.adapters.ListEditor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellWidget;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.RowStyles;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.ColumnSortList;
-import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CellPanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBox;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class ContactBook implements EntryPoint {
+public class ContactBook implements EntryPoint,ClickHandler{
 	
 	InlineLabel searchLabel;
 	static TextBox searchText;
 	static Long selectedIndex;
-	static HorizontalPanel thirdPanel;
-	private boolean success;
 	static Integer listSize;
 	static List<Contact> contactList=new ArrayList<Contact>();
 	static CellTable<Contact> table = new CellTable<Contact>();
     static ListDataProvider<Contact> dataProvider = new ListDataProvider<Contact>();
+    static GreetingServiceAsync service=GWT.create(GreetingService.class);
+    Button addButton;
+    Button editButton;
+    Button removeButton;
+    VerticalPanel actionPanel;
+    HorizontalPanel firstPanel;
+	HorizontalPanel secondPanel;
+	static HorizontalPanel thirdPanel;
+		
+    
 	static class PhoneCell extends AbstractCell<List<Phone>> {
 
 	  interface Templates extends SafeHtmlTemplates {
@@ -153,25 +92,27 @@ public class ContactBook implements EntryPoint {
 	    }
 	  }
 	
-	static GreetingServiceAsync service=GWT.create(GreetingService.class);
-	
 	  public void onModuleLoad() {
-		  thirdPanel=new HorizontalPanel();
-		  success=false;
 		  searchLabel=new InlineLabel("Enter some name to search:");
 		  searchLabel.setStyleName("searchLabel");
 		  searchText=new TextBox();
 		  searchText.setStyleName("searchText");
-			
+		  addButton = new Button();
+		  editButton = new Button();
+		  removeButton = new Button();
+		  actionPanel=new VerticalPanel();
+		  firstPanel=new HorizontalPanel();
+		  secondPanel=new HorizontalPanel();
+		  thirdPanel=new HorizontalPanel();
+		   
 		  searchText.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				// TODO Auto-generated method stub
-				if(event.getValue().isEmpty()){
+				if(event.getValue().isEmpty())
 					updateTable();
-				}
-					else{
+				else{
 					service.getContactListByQuery(event.getValue(),0,new AsyncCallback<List<Contact>>() {
 
 						@Override
@@ -199,7 +140,7 @@ public class ContactBook implements EntryPoint {
 		});
 		  
 		  
-	       table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+	      table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		   //table.setPageSize(10);
 		  table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			
@@ -216,14 +157,14 @@ public class ContactBook implements EntryPoint {
 			    table.setRowData(start, toSet);	
 			}
 		});
-		   SimplePager.Resources pagerResources = 
-				   GWT.create(SimplePager.Resources.class); 
-				                   SimplePager pager = new SimplePager(TextLocation.CENTER, 
-				   pagerResources, false, 0, true); 
-				                    pager.setDisplay(table); 
-				                   pager.setPageSize(10); 
-		   updateListSize();			 
-		   updateTable();
+		
+		 SimplePager.Resources pagerResources =  GWT.create(SimplePager.Resources.class); 
+		 SimplePager pager = new SimplePager(TextLocation.CENTER, 
+		 pagerResources, false, 0, true); 
+		 pager.setDisplay(table); 
+		 pager.setPageSize(10); 
+		 updateListSize();			 
+		 updateTable();
 					
 	    TextColumn<Contact> idColumn = new TextColumn<Contact>() {
 		      @Override
@@ -240,8 +181,8 @@ public class ContactBook implements EntryPoint {
 		      }
 		    };
 		    table.addColumn(surnameColumn, "Surname");
-	    // Add a text column to show the name.
-	    TextColumn<Contact> nameColumn = new TextColumn<Contact>() {
+	    
+		TextColumn<Contact> nameColumn = new TextColumn<Contact>() {
 	      @Override
 	      public String getValue(Contact object) {
 	        return object.getName();
@@ -249,9 +190,8 @@ public class ContactBook implements EntryPoint {
 	    };
 	    table.addColumn(nameColumn, "Name");
 
-	    // Add a date column to show the surname.
 	    PhoneCell cl=new PhoneCell();
-	    Column<Contact, List<Phone>> dateColumn = new Column<Contact, List<Phone>>(cl) {
+	    Column<Contact, List<Phone>> phoneColumn = new Column<Contact, List<Phone>>(cl) {
 
 			@Override
 			public List<Phone> getValue(Contact object) {
@@ -259,9 +199,8 @@ public class ContactBook implements EntryPoint {
 				return object.getPhones();
 			}
 		};
-	    table.addColumn(dateColumn, "Phones");
+	    table.addColumn(phoneColumn, "Phones");
 
-	    // Add a selection model to handle user selection.
 	    final SingleSelectionModel<Contact> selectionModel = new SingleSelectionModel<Contact>();
 	    table.setSelectionModel(selectionModel);
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -276,10 +215,8 @@ public class ContactBook implements EntryPoint {
 	    
 	    dataProvider.addDataDisplay(table);
 	    List<Contact> list = dataProvider.getList();
-	        
-	        table.getColumn(1).setSortable(true);
-	        ListHandler<Contact> surnameSortHandler = new ListHandler<Contact>(
-		            list);
+	    table.getColumn(1).setSortable(true);
+	    ListHandler<Contact> surnameSortHandler = new ListHandler<Contact>(list);
 		        surnameSortHandler.setComparator(surnameColumn,
 		            new Comparator<Contact>() {
 		            @Override
@@ -340,92 +277,28 @@ public class ContactBook implements EntryPoint {
 			        table.addColumnSortHandler(columnSortHandler);
 			        table.getColumnSortList().push(idColumn);
 			       
-	    Button add = new Button();
-	    add.addClickListener(new ClickListener() {
-	        public void onClick(Widget sender) {
-	           DialogBox dlg = new ContactDialogBox("add");
-	           dlg.center();
-	        }
-	      });
 	    
-	    Button edit = new Button();
-	    edit.addClickListener(new ClickListener() {
-	        public void onClick(Widget sender) {
-	           System.out.println(selectedIndex);
-	           if(selectedIndex!=null && selectedIndex>0){
-	           DialogBox dlg = new ContactDialogBox("edit");
-	           dlg.center();
-	           }
-	           else
-	           {
-	        	   DialogBox dlg=new ExceptionDialogBox();
-	        	   dlg.center();
-	           }
-	        }
-	      });
-	      
-		 Button remove = new Button();
-		    remove.addClickListener( new ClickListener() {
-	        public void onClick(Widget sender) {
-	        	
-	        	 if(selectedIndex!=null && selectedIndex>0){
-	        	final List<Contact> list = dataProvider.getList();
-
-	        	
-	        	for(final Contact c:list)
-			    	if(c.getId()==selectedIndex){
-			    		service.delete(c,new AsyncCallback<Void>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-								Window.alert(caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(Void result) {
-								// TODO Auto-generated method stub
-								searchText.setValue("");
-								list.remove(c);
-								updateListSize();			 
-								updateTable();
-					    		table.redraw();
-								Window.alert("Selected contact is removed!");
-							}
-						});
-			    		
-			    	}
-			    	
-	        }
-	        	 else
-		           {
-		        	   DialogBox dlg=new ExceptionDialogBox();
-		        	   dlg.center();
-		           }
-	        }
-	      });
-		    
-		    add.setStyleName("addButton");
-		    edit.setStyleName("editButton");
-		    remove.setStyleName("removeButton");
-		    VerticalPanel actionPanel=new VerticalPanel();
-		    actionPanel.add(add);
-		    actionPanel.add(edit);
-		    actionPanel.add(remove);
+	    addButton.addClickHandler(this);
+	    editButton.addClickHandler(this);
+	    removeButton.addClickHandler(this);
+		addButton.setStyleName("addButton");
+		editButton.setStyleName("editButton");
+		removeButton.setStyleName("removeButton");
+		actionPanel.add(addButton);
+		actionPanel.add(editButton);
+		actionPanel.add(removeButton);
 		     
-	    HorizontalPanel firstPanel=new HorizontalPanel();
 	    firstPanel.add(searchLabel);
 	    firstPanel.add(searchText);
 	   
-	    HorizontalPanel secondPanel=new HorizontalPanel();
 	    secondPanel.add(table);
 	    secondPanel.add(actionPanel);
 	    
 	    thirdPanel.add(pager);
 	    
+	    secondPanel.setWidth("80%");
 	    table.setWidth("90%");
 	    DOM.setStyleAttribute(table.getElement(), "margin","20px" );
-	    secondPanel.setWidth("80%");
 	    RootPanel.get("root").add(firstPanel);
 	    RootPanel.get("root").add(secondPanel);
 	    RootPanel.get("root").add(thirdPanel);
@@ -441,17 +314,14 @@ public class ContactBook implements EntryPoint {
 
 				@Override
 				public void onSuccess(List<Contact> result) {
-					if(result.size()==0){
-				    updateTable();
-					}
-					else{
+					
 						List<Contact> list=dataProvider.getList();
 						list.clear();
 						for(Contact c:result)
 							list.add(c);
 						table.setRowCount(result.size());
 						table.setRowData(0, result);
-					}
+					
 				}
 			});
 		  
@@ -463,7 +333,7 @@ public class ContactBook implements EntryPoint {
 				@Override
 				public void onFailure(Throwable caught) {
 					// TODO Auto-generated method stub
-					
+					Window.alert(caught.getMessage());
 				}
 
 				@Override
@@ -476,14 +346,63 @@ public class ContactBook implements EntryPoint {
 			});
 	  }
 	   
-	 
-
-	  
 	  static void addNewContact(){
 		  searchText.setValue("");
 		  updateListSize();
 		  updateTable();
 	  }
-	  
-	  void nextPage(int pageNum){}
+	@Override
+	public void onClick(ClickEvent event) {
+		// TODO Auto-generated method stub
+		if(event.getSource()==addButton){
+			 DialogBox dlg = new ContactDialogBox("add");
+	           dlg.center();
+		}
+		
+		if(event.getSource()==editButton){
+			if(selectedIndex!=null && selectedIndex>0){
+		           DialogBox dlg = new ContactDialogBox("edit");
+		           dlg.center();
+		           }
+		           else
+		           {
+		        	   DialogBox dlg=new ExceptionDialogBox();
+		        	   dlg.center();
+		           }
+		}
+
+		if(event.getSource()==removeButton){
+			 if(selectedIndex!=null && selectedIndex>0){
+		        	final List<Contact> list = dataProvider.getList();
+		        	for(final Contact c:list)
+				    	if(c.getId()==selectedIndex){
+				    		service.delete(c,new AsyncCallback<Void>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+									Window.alert(caught.getMessage());
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									// TODO Auto-generated method stub
+									searchText.setValue("");
+									list.remove(c);
+									updateListSize();			 
+									updateTable();
+						    		table.redraw();
+									Window.alert("Selected contact is removed!");
+								}
+							});
+				    		
+				    	}
+			 }
+			 else{
+			      DialogBox dlg=new ExceptionDialogBox();
+			      dlg.center();
+			 }
+		}
 	}
+}
+	

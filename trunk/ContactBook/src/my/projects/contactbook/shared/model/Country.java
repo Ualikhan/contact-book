@@ -31,17 +31,6 @@ public class Country implements Serializable{
 	@Column(name="CODE",nullable=false,unique=false)
 	private int code;
 	
-	@OneToMany(fetch=FetchType.EAGER,mappedBy="country")
-	List<City> cities;
-	
-	public void setCities(List<City> cities) {
-		this.cities = cities;
-	}
-	
-	public List<City> getCities() {
-		return cities;
-	}
-	
 	public void setCode(int code) {
 		this.code = code;
 	}

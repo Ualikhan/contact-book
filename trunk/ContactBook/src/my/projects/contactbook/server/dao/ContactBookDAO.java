@@ -117,8 +117,17 @@ public class ContactBookDAO {
 	public List<Country> listCountry(int pageNum) {
 		String queryStr = "from " + Country.class.getSimpleName() + " fetch all properties order by name";
 		System.out.println(queryStr);
-		Query query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(20);
+		Query query = getCurrentSession().createQuery(queryStr);
 		return (List<Country>)query.list();
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public List<City> listCity(String countryName) {
+		String queryStr = "from " + City.class.getSimpleName() + " fetch all properties  where country=(SELECT c.id FROM Country c where c.name='"+countryName+"') order by name";
+		System.out.println(queryStr);
+		Query query = getCurrentSession().createQuery(queryStr);
+		return (List<City>)query.list();
 	}
 	
 	@SuppressWarnings("unchecked")
