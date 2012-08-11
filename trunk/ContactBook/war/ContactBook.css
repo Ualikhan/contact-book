@@ -101,16 +101,16 @@ margin: 10px;
   margin: 5px;
 }
 
-.hp{
+#bottomPanel{
 	margin-left: 60px;
 }
 
-.closeButtonDialog{
+#closeButtonDialog{
   margin: 10px;
   margin-left:20px;
   width: 80px;
 }
-.okButtonDialog{
+#okButtonDialog{
 	margin:10px;
 	width: 80px;
     margin-left: 20px;
@@ -211,22 +211,22 @@ margin: 10px;
   border: solid 0px white;
 	text-align: center;
 	width: 32px;
-	height: 128px;
-	background: transparent url("images/previous.png");
+	height: 100px;
+	background: transparent url("images/previous.png?v2");
 }
 .closeButtonPhone:hover{
   border: solid 0px white;
 	text-align: center;
 	width: 32px;
-	height: 128px;
-	background: transparent url("images/previousOnHover.png");
+	height: 100px;
+	background: transparent url("images/previousOnHover.png?v2");
 }
 .closeButtonPhone:active{
   border: solid 1px activeborder;
 	text-align: center;
 	width: 32px;
-	height: 128px;
-	background: transparent url("images/previousOnHover.png");
+	height: 100px;
+	background: transparent url("images/previousOnHover.png?v2");
 }
 .countryLabel{
 	font-family: inherit;
@@ -239,28 +239,31 @@ margin: 10px;
 	font-size: 16px;
 }
 .numberLabel{
+	width:100px;
 	font-family: inherit;
 	color: blue;
 	font-size: 16px;
 }
 .countryList{
+	width:100px;
 	font-family: serif;
 	font-size: 12px;
 	color: graytext;
 }
 .cityList{
+	width:100px;
 	font-family: serif;
 	font-size: 12px;
 	color: graytext;
 }
 .countryCode{
-	width: 30px;
+	width: 100px;
 	height: 20px;
 	font-style: inherit;
 	color: red;
 }
 .cityCode{
-	width: 60px;
+	width: 100px;
 	height: 20px;
 	font-style: inherit;
 	color: blue;
@@ -270,6 +273,70 @@ margin: 10px;
 	height: 20px;
 	font-style: inherit;
 	color: black;
+}
+
+.phonesLabel{
+	width:100px;
+	font-size: 14px;
+	font-style: normal;
+	color: teal;
+}
+
+
+.phoneLabel{
+	color: gray;
+	font-style: inherit;
+	font-stretch: expanded;
+}
+
+
+.phoneNumber{
+	font-style: normal;
+	font-stretch: wider;
+}
+
+
+.phoneType{
+	color: infotext;
+	font-style: inherit;
+	font-stretch: wider;
+}
+
+.nameLabel{
+	width:100px;
+	height: 100px;
+	font-size: 14px;
+	font-style: normal;
+	color: teal;
+}
+
+.surnameLabel{
+	width:100px;
+	height: 100px;
+	font-size: 14px;
+	font-style: normal;
+	color: teal;
+}
+
+
+.surname{
+	width:140px;
+	height: 100px;
+	color: captiontext;
+}
+
+.name{
+	width:140px;
+	height: 100px;
+	color: captiontext;
+}
+
+
+.errorField{
+	color: red;
+	font-size: 16px;
+	font-family: serif;
+	font-style: oblique;
 }
 
 #root{

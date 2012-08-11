@@ -6,8 +6,8 @@
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
-  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
-  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+  <!--  inherits name='com.google.gwt.user.theme.clean.Clean'/>-->
+   <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
@@ -15,6 +15,7 @@
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='my.projects.contactbook.client.ContactBook'/>
+  
   <servlet path="/services/myService" class="my.projects.contactbook.server.GreetingServiceImpl" />
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>

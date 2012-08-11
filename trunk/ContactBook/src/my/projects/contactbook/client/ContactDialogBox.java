@@ -45,7 +45,10 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 	HorizontalPanel bottomPanel;
 	FlexTable flexTable;
     int dialogX;
+    String errorName="Enter valid name!";
+    String errorSurname="Enter valid surname!";
 	
+    
 		  public ContactDialogBox(String action) {
 			  setText("Add contact");
 			  current=this;
@@ -62,26 +65,34 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 			  bottomPanel=new HorizontalPanel();
 			  flexTable = new FlexTable();
 			  dialogX=getPopupLeft();
-			    
+			  
+			  name.addClickHandler(this);
+			  surname.addClickHandler(this);
+			  
+			  addPhoneButton.addClickHandler(this);
+			  addPhoneButton.setStyleName("addPhoneButton");
+			  nameLabel.setStyleName("nameLabel",true);
+			  surnameLabel.setStyleName("nameLabel",true);
+			  name.setStyleName("nameText",true);
+			  surname.setStyleName("surnameText",true);
+			  phoneLabel.setStyleName("phonesLabel",true);
+				
 			  if(action.equals("add")){
 			
-			addPhoneButton.addClickHandler(this);
-		    addPhoneButton.setStyleName("addPhoneButton");
-		  
+			
 		    okButton.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
 					// TODO Auto-generated method stub
-					boolean validNumbers=true;
 					boolean validName=true;
 					boolean validSurname=true;
 					final List<Contact> list = ContactBook.dataProvider.getList();
 					final Contact c=new Contact();
-					if(FieldVerifier.isValidName(name.getValue()))
+					if(FieldVerifier.isValidName(name.getValue()) && !name.getValue().equals(errorName))
 					c.setName(name.getValue());
 					else validName=false;
-					if(FieldVerifier.isValidSurname(name.getValue()))
+					if(FieldVerifier.isValidSurname(surname.getValue()) && !surname.getValue().equals(errorSurname))
 					c.setSurname(surname.getValue());
 					else validSurname=false;
 					List<Phone> phones=new ArrayList<Phone>();
@@ -97,7 +108,6 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 						phones.add(newPhone);
 						
 					}
-					if(validNumbers){
 					c.setPhones(phones);
 					if(validName && validSurname){
 			        ContactBook.service.insert(c, new AsyncCallback<Long>() {
@@ -115,17 +125,19 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 							Window.alert(caught.getMessage());
 						}
 					});
+			        hide();
 					}
-					else if(!validName)
-						name.setValue("Enter valid name");
-					else if(!validSurname)
-						surname.setValue("Enter valid surname");
-					
-				    hide();
+					else if(!validSurname){
+						surname.setStyleName("errorField");
+						surname.setValue("Enter valid surname!");
 					}
+					else if(!validName){
+						name.setValue("Enter valid name!");
+						name.setStyleName("errorField");
 						
-					
-				}
+					}
+					}
+				
 			});
 		    
 			  
@@ -133,7 +145,6 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 		    //okButton.setStyleName("okButtonDialog");
 		    //closeButton.setStyleName("closeButtonDialog");
 		    DOM.setElementAttribute(bottomPanel.getElement(), "id", "bottomPanel");
-		    
 		    DOM.setElementAttribute(okButton.getElement(), "id", "okButtonDialog");
 		    DOM.setElementAttribute(closeButton.getElement(), "id", "closeButtonDialog");
 		    
@@ -149,6 +160,8 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 		    flexTable.setWidget(3, 0, phonesPanel);
 		    flexTable.setWidget(4, 0, bottomPanel);
 		    
+		   
+			  
 		    
 		    flexTable.setStyleName("panel flexTable");
 		    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
@@ -169,6 +182,7 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 		    setWidget(flexTable);
 		  }
 
+			  
 			  else if(action.equals("edit")){
 				    setText("Edit contact");
 				    
@@ -191,6 +205,11 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 							phoneType.addItem("mobile");
 						    phoneType.addItem("home");
 						    phoneType.addItem("work");
+						    
+						    phoneLabel.setStyleName("phoneLabel",true);
+							phoneNumber.setStyleName("phoneNumber",true);
+							phoneType.setStyleName("phoneType",true);
+							  
 						    Button chooseNumberButton=new Button();
 						    chooseNumberButton.addClickHandler(new ClickHandler() {
 								
@@ -201,7 +220,7 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 									ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
 									current.setPopupPosition(getPopupLeft()-200, getPopupTop());
 									pd.show();
-									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
+									pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-50,sender.getAbsoluteTop()-40);
 									pd.setArgument1(sender.getLayoutData());
 									pd.setArgument2(current);
 								}
@@ -246,9 +265,7 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 				    		}
 				    	}
 				    
-				   addPhoneButton.addClickHandler(this);
-				   addPhoneButton.setStyleName("addPhoneButton");
-				   okButton.addClickHandler(new ClickHandler() {
+				    okButton.addClickHandler(new ClickHandler() {
 						
 						@Override
 						public void onClick(ClickEvent event) {
@@ -259,11 +276,11 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 							
 							for(Contact c:list)
 						    	if(c.getId()==ContactBook.selectedIndex){
-						    if(FieldVerifier.isValidName(name.getValue()) && !name.getValue().equals("Enter valid name!"))		
+						    if(FieldVerifier.isValidName(name.getValue()) && !name.getValue().equals(errorName))		
 						    	c.setName(name.getValue());
 						    else validName=false;
 							
-						    if(FieldVerifier.isValidSurname(surname.getValue())&& !name.getValue().equals("Enter valid surname!"))		
+						    if(FieldVerifier.isValidSurname(surname.getValue()) && !name.getValue().equals(errorSurname))		
 						    	 c.setSurname(surname.getValue());
 						      	else validSurname=false;
 							
@@ -295,15 +312,23 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 									public void onSuccess(Void result) {
 										// TODO Auto-generated method stub
 										ContactBook.table.redraw();
+										
 									}
 								});	
 						    
 						    hide();
 						    }
-						    else if(!validName)
+						    else if(!validName){
 								name.setValue("Enter valid name!");
-							else if(!validSurname)
+								name.setStyleName("errorField");
+									
+						    }
+							else if(!validSurname){
 								surname.setValue("Enter valid surname!");
+								surname.setStyleName("errorField");
+								
+							}
+						    
 						    	}
 						}
 					});
@@ -320,10 +345,14 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 				    flexTable.setWidget(3, 0, phonesPanel);
 				    flexTable.setWidget(4, 0,bottomPanel);
 				    
-				    bottomPanel.setStyleName("bottomPanel");
-				    okButton.setStyleName("okButtonDialog");
-				    closeButton.setStyleName("closeButtonDialog");
-				   
+				  
+				    //bottomPanel.setStyleName("bottomPanel");
+				    //okButton.setStyleName("okButtonDialog");
+				    //closeButton.setStyleName("closeButtonDialog");
+				    DOM.setElementAttribute(bottomPanel.getElement(), "id", "bottomPanel");
+				    DOM.setElementAttribute(okButton.getElement(), "id", "okButtonDialog");
+				    DOM.setElementAttribute(closeButton.getElement(), "id", "closeButtonDialog");
+				    
 				    
 				    flexTable.setStyleName("panel flexTable");
 				    flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
@@ -380,6 +409,10 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 			    phoneType.addItem("home");
 			    phoneType.addItem("work");
 			    
+			    phoneLabel.setStyleName("phoneLabel",true);
+				phoneNumber.setStyleName("phoneNumber",true);
+				phoneType.setStyleName("phoneType",true);
+				  
 			    Button chooseNumberButton=new Button();
 			    chooseNumberButton.addClickHandler(new ClickHandler() {
 					
@@ -391,7 +424,7 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 						sender.setStyleName("chooseNumberButtonActive");
 						ChoosePhoneNumberDialogBox pd=new ChoosePhoneNumberDialogBox();
 						pd.show();
-						pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-20,sender.getAbsoluteTop()-60);
+						pd.setPopupPosition(getPopupLeft()+getOffsetWidth()-50,sender.getAbsoluteTop()-40);
 						pd.setArgument1(sender.getLayoutData());
 						pd.setArgument2(current);
 						
@@ -434,9 +467,24 @@ public class ContactDialogBox extends DialogBox implements ClickHandler {
 			    phonesPanel.setWidget(index, 2, phoneType);
 			    phonesPanel.setWidget(index, 3, deletePhoneButton);
 			    phonesPanel.setWidget(index, 4, chooseNumberButton);
+			    
+			    
+			    
 			}
 			
-
+			if(event.getSource()==name)
+				if(name.getValue().equals(errorName)){
+					name.setValue("");
+					name.removeStyleName("errorField");
+						
+				}
+			
+			if(event.getSource()==surname)
+				if(surname.getValue().equals(errorSurname)){
+					surname.setValue("");
+					surname.removeStyleName("errorField");
+					
+				}
 		}
 		 
 		}

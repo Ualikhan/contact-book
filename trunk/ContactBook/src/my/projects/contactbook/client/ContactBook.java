@@ -8,8 +8,12 @@ import my.projects.contactbook.shared.Phone;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safecss.shared.SafeStyles;
@@ -105,6 +109,39 @@ public class ContactBook implements EntryPoint,ClickHandler{
 		  secondPanel=new HorizontalPanel();
 		  thirdPanel=new HorizontalPanel();
 		   
+		  searchText.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				// TODO Auto-generated method stub
+				if(searchText.getValue().isEmpty())
+					updateTable();
+				else{
+					service.getContactListByQuery(searchText.getValue(),0,new AsyncCallback<List<Contact>>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(List<Contact> result) {
+							
+							List<Contact> list=dataProvider.getList();
+							list.clear();
+							for(Contact c:result)
+								list.add(c);
+							
+							table.setRowCount(result.size());
+							table.setRowData(0, result);
+						    table.redraw();	
+						}
+					});
+					}
+			
+				
+			}
+		});
 		  searchText.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
@@ -351,6 +388,8 @@ public class ContactBook implements EntryPoint,ClickHandler{
 		  updateListSize();
 		  updateTable();
 	  }
+	  	  
+	  
 	@Override
 	public void onClick(ClickEvent event) {
 		// TODO Auto-generated method stub
@@ -393,6 +432,7 @@ public class ContactBook implements EntryPoint,ClickHandler{
 									updateTable();
 						    		table.redraw();
 									Window.alert("Selected contact is removed!");
+									selectedIndex=(long) 0;
 								}
 							});
 				    		
@@ -404,5 +444,6 @@ public class ContactBook implements EntryPoint,ClickHandler{
 			 }
 		}
 	}
+	
 }
 	
