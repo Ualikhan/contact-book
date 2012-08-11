@@ -12,8 +12,7 @@
 						http://www.springframework.org/schema/context/spring-context-2.5.xsd
 						http://www.springframework.org/schema/aop 
 						http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-	
-	
+
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<context:annotation-config />
 	<context:component-scan base-package="my.projects.contactbook.server" />
@@ -38,6 +37,7 @@
 	
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
+		
 	</bean>
 	
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" destroy-method="destroy">
@@ -58,5 +58,6 @@
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
 	
 </beans>

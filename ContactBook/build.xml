@@ -29,8 +29,6 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 	</target>
 
 	
-
-	
 	<target name="libs" depends="resolve" description="Copy libs to WEB-INF/lib">
 	    <copy todir="war/WEB-INF/lib" >
 	          <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -38,7 +36,6 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 	  </target>
 
     <!-- Compile the java source code using javac -->
-	<!-- Compile the java source code using javac -->
 	    <target name="compile" depends="libs">        
 	        <javac srcdir="${src.dir}" includes="**" destdir="war/WEB-INF/classes">
 	            <classpath refid="project.classpath"/>
@@ -49,12 +46,10 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 
 	    </target>       
 	    <!-- Invoke the GWT compiler to create the Javascript for us -->
-	   <target name="gwt-compile" depends="compile">
+	  <target name="gwt-compile" depends="compile">
 	        <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
 	            <classpath>
-	                <!-- src dir is added to ensure the module.xml file(s) are on the 
-
-	classpath -->
+	              
 	                <pathelement location="${src.dir}"/>                
 	                <path refid="project.classpath"/>
 	            </classpath>
@@ -62,11 +57,8 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 	            <arg value="${gwt.module.name}"/>
 	         </java>
 	     </target>
-		
-		
-		
-
-	<target name="drop-db" depends="compile">
+	
+	<target name="drop-db" depends="gwt-compile">
 					
 					<sql driver="org.postgresql.Driver"
 					        classpathref="project.classpath"
@@ -75,15 +67,13 @@ xmlns:ivy="antlib:org.apache.ivy.ant" >
 					        password="admin"
 					        autocommit="true">
 						SELECT pg_terminate_backend
-
-	(pg_stat_activity.procpid)
+							(pg_stat_activity.procpid)
 						FROM pg_stat_activity
 						WHERE pg_stat_activity.datname = 'mytestdb';
-						   DROP DATABASE IF EXISTS mytestdb;
-							DROP OWNED BY asd CASCADE;					
-							DROP USER IF EXISTS asd;
-							
-							</sql>
+						DROP DATABASE IF EXISTS mytestdb;
+						DROP OWNED BY asd CASCADE;					
+						DROP USER IF EXISTS asd;
+						</sql>
 				</target>
 		
 

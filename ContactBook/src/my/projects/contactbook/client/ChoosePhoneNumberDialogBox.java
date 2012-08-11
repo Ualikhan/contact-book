@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -44,11 +45,11 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 		  InlineLabel numberLabel;
 		  ListBox countryList;
 		  ListBox cityList;
-		  IntegerBox countryCode;
+		  TextBox countryCode;
 		  TextBox cityCode;
-		  IntegerBox numberText;
+		  TextBox numberText;
+		  Label infoLabel;
 		  FlexTable table;
-		  Button okButton;
 		  Button closeButton;
 		  HorizontalPanel bottomPanel;
 		  ContactDialogBox parent;
@@ -65,14 +66,14 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 			  numberLabel=new InlineLabel("Number");
 			  mainPanel=new HorizontalPanel();
 			  countryList=new ListBox();
-			  countryCode=new IntegerBox();
+			  countryCode=new TextBox();
 			  cityCode=new TextBox();
-			  numberText=new IntegerBox();
+			  numberText=new TextBox();
+			  infoLabel=new Label();
 			  table=new FlexTable();
 			  cityList=new ListBox();
 			  maxScroll=0;
 			  bottomPanel=new HorizontalPanel();
-			  okButton = new Button("OK");
 			  closeButton = new Button();
 			  
 			  service.listCountry(0,new AsyncCallback<List<Country>>() {
@@ -90,8 +91,9 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 					cityList.addItem("Select city code");
 					cityList.setEnabled(false);
 					for (int i = 0; i < result.size(); i++) {
-		                  countryList.addItem(result.get(i).getName());
-		                }
+						  countryList.addItem(result.get(i).getName());
+		                
+					}
 				}
 			});
 			  
@@ -123,7 +125,7 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 								@Override
 								public void onSuccess(Country result) {
 									// TODO Auto-generated method stub
-									countryCode.setValue(result.getCode());
+									countryCode.setValue(result.getCode()+"");
 								}
 								});
 							
@@ -147,7 +149,7 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 								cityList.clear();
 								cityList.addItem("Select city code");
 								for(City city:result)
-									cityList.addItem(city.getName());
+									cityList.addItem(city.getName(),city.getId()+"");
 								
 								cityList.addClickHandler(new ClickHandler() {
 									
@@ -158,11 +160,18 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 										Widget sender=(Widget) event.getSource();
 										ListBox cityLb=(ListBox) sender;
 										cityCode.setValue("");
-										String cityName=cityLb.getItemText(cityLb.getSelectedIndex());
+										String cityName=cityLb.getValue(cityLb.getSelectedIndex());
+										System.out.println("CODE "+cityName);
+										System.out.println("NAME "+cityLb.getItemText(cityLb.getSelectedIndex()));
+										
 										for(City city:result)
-											if(city.getName().equals(cityName))
+											if((city.getId()+"").equals(cityName))
 												cityCode.setValue(city.getCode());
-																			
+															
+										int maxLength=11-countryCode.getValue().length()-cityCode.getValue().length();
+										String numberInfo="Length: "+maxLength;
+										infoLabel.setText(numberInfo);
+										numberText.setMaxLength(maxLength);
 									}
 								});
 							}
@@ -180,25 +189,20 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 			  table.setWidget(0, 2, numberLabel);
 			  table.setWidget(1, 0, countryList);
 			  table.setWidget(1, 1, cityList);
+			  table.setWidget(1, 2, infoLabel);
 			  table.setWidget(2, 0, countryCode);
 			  table.setWidget(2, 1, cityCode);
 			  table.setWidget(2, 2, numberText);
-			  table.setWidget(3, 1, okButton);
 			  
 			  countryLabel.setStyleName("countryLabel");
 			  cityLabel.setStyleName("cityLabel");
 			  numberLabel.setStyleName("numberLabel");
 			  countryList.setStyleName("countryList");
 			  cityList.setStyleName("cityList");
-			  countryCode.setStyleName("countryCode");
-			  cityCode.setStyleName("cityCode");
-			  numberText.setStyleName("numberText");
-			  
-			 
-			  okButton.addClickHandler(this);
+			  countryCode.setStyleName("countryCode",true);
+			  cityCode.setStyleName("cityCode",true);
+			  numberText.setStyleName("numberText",true);
 			  closeButton.addClickHandler(this);
-			 
-			  okButton.setStyleName("okButton");
 			  closeButton.setStyleName("closeButtonPhone");
 			  mainPanel.add(closeButton);
 			  mainPanel.add(table);
@@ -221,11 +225,6 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 		public void onClick(ClickEvent event) {
 			// TODO Auto-generated method stub
 			if(event.getSource()==closeButton){
-			this.parent.setStyle();
-			hide();
-			}
-			
-			if(event.getSource()==okButton){
 				String phoneNum="";
 				if(countryCode.getValue()!=null)
 					phoneNum+=countryCode.getValue();
@@ -233,8 +232,8 @@ public class ChoosePhoneNumberDialogBox extends DialogBox implements ClickHandle
 					phoneNum+=cityCode.getValue();
 				if(numberText.getValue()!=null)
 					phoneNum+=numberText.getValue();
-				((ContactDialogBox) parent).setNumberText(layoutData,phoneNum);
-				((ContactDialogBox) parent).setStyle();
+				this.parent.setNumberText(layoutData,phoneNum);
+				this.parent.setStyle();
 				hide();
 			
 			}

@@ -69,13 +69,13 @@ public class ContactBookDAO {
 			String second=q.substring(q.indexOf(" ")+1);
 		String queryStr = "SELECT c FROM Contact c where ((c.name like '%"+first+"%') AND (c.surname like '%"+second+"%')) OR ((c.name like '%"+second+"%') AND (c.surname like '%"+first+"%'))  order by c.id";
 		System.out.println(queryStr);
-		query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
+		query = getCurrentSession().createQuery(queryStr);
 		}
 		else{
 			
 			String queryStr = "SELECT c FROM Contact c where (c.name like '%"+q+"%') OR (c.surname like '%"+q+"%') order by c.id";
 			System.out.println(queryStr);
-			query = getCurrentSession().createQuery(queryStr).setFirstResult(pageNum).setMaxResults(10);
+			query = getCurrentSession().createQuery(queryStr);
 		}
 		return (List<Contact>)query.list();
 	}
